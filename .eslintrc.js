@@ -343,7 +343,7 @@ module.exports = {
         "node/shebang": 0,
         "react/button-has-type": 0,
         "react/default-props-match-prop-types": 1,
-        "react/destructuring-assignment": 1,
+        "react/destructuring-assignment": 0,
         "react/display-name": 1,
         "react/forbid-component-props": 0,
         "react/forbid-prop-types": 0,
