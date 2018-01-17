@@ -10,12 +10,6 @@ const editorStyle = {
   overflow: "auto"
 };
 
-const workspaceStyle = {
-  width: "2000px",
-  height: "2000px",
-  backgroundColor: "gray"
-};
-
 export default class ScrollBox extends React.PureComponent {
 
   static propTypes = {
@@ -31,6 +25,7 @@ export default class ScrollBox extends React.PureComponent {
     id: PropTypes.string,
     initialX: PropTypes.number,
     initialY: PropTypes.number,
+    onScroll: PropTypes.func,
     style: PropTypes.object,
     width: PropTypes.number
   }
@@ -47,14 +42,22 @@ export default class ScrollBox extends React.PureComponent {
     }
   }
 
-  scroll(x, y) {
+  scroll(e, x, y) {
     if (!this.scrollElement) return;
+    const lastX = this.scrollElement.scrollLeft;
+    const lastY = this.scrollElement.scrollTop;
     this.scrollElement.scrollLeft = x;
     this.scrollElement.scrollTop = y;
+    if (this.props.onScroll) {
+      const deltaX = x - lastX;
+      const deltaY = y - lastY;
+      this.props.onScroll(e, { x, y, deltaX, deltaY, lastX, lastY });
+    }
   }
 
-  scrollDelta(dx, dy) {
+  scrollDelta(e, dx, dy) {
     this.scroll(
+      e,
       this.scrollElement.scrollLeft + dx,
       this.scrollElement.scrollTop + dy
     );
@@ -63,6 +66,7 @@ export default class ScrollBox extends React.PureComponent {
   scrollToCenter() {
     const { width, height } = this.props;
     this.scroll(
+      null,
       (width - this.scrollElement.clientWidth) / 2,
       (height - this.scrollElement.clientHeight) / 2
     );
@@ -88,7 +92,6 @@ export default class ScrollBox extends React.PureComponent {
     } = this.props;
 
     const sty = {
-      ...workspaceStyle,
       width: `${width}px`,
       height: `${height}px`
     };
@@ -109,7 +112,7 @@ export default class ScrollBox extends React.PureComponent {
         id={id}
         onWheel={e => {
           e.preventDefault();
-          this.scrollDelta(e.deltaX, e.deltaY);
+          this.scrollDelta(e, e.deltaX, e.deltaY);
         }}
         ref={e => { this.scrollElement = e; }}
         style={{ ...editorStyle, ...style }}>

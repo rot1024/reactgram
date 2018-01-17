@@ -12,6 +12,7 @@ export default () => {
         center
         width={2000}
         height={2000}
+        onScroll={(e, d) => console.log("onScroll", d)}
         component={props => (
           <Grid
             backgroundColor="#434343"
