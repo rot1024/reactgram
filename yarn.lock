@@ -4351,10 +4351,6 @@ fragment-cache@^0.2.1:
   dependencies:
     map-cache "^0.2.2"
 
-framesync@^3.0.2, framesync@^3.1.7:
-  version "3.1.7"
-  resolved "https://registry.yarnpkg.com/framesync/-/framesync-3.1.7.tgz#9b9aa3eff8598625302597851a428f40c3dc1c6b"
-
 fresh@0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
@@ -7030,14 +7026,6 @@ podda@^1.2.2:
     babel-runtime "^6.11.6"
     immutable "^3.8.1"
 
-popmotion@^8.1.7:
-  version "8.1.7"
-  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-8.1.7.tgz#7dba748d9fae1284fc7a5702e5ed0b7be66ffcbe"
-  dependencies:
-    framesync "^3.1.7"
-    style-value-types "^1.0.3"
-    stylefire "^1.1.8"
-
 portfinder@^1.0.9:
   version "1.0.13"
   resolved "https://registry.yarnpkg.com/portfinder/-/portfinder-1.0.13.tgz#bb32ecd87c27104ae6ee44b5a3ccbf0ebb1aede9"
@@ -7598,6 +7586,13 @@ react-dom@^16.2.0:
     fbjs "^0.8.16"
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
+    prop-types "^15.6.0"
+
+react-draggable@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/react-draggable/-/react-draggable-3.0.5.tgz#c031e0ed4313531f9409d6cd84c8ebcec0ddfe2d"
+  dependencies:
+    classnames "^2.2.5"
     prop-types "^15.6.0"
 
 react-element-to-jsx-string@^13.1.0:
@@ -8927,17 +8922,6 @@ style-loader@^0.19.1:
   dependencies:
     loader-utils "^1.0.2"
     schema-utils "^0.3.0"
-
-style-value-types@^1.0.0, style-value-types@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/style-value-types/-/style-value-types-1.0.3.tgz#651c3c75c988ea2ef86e20c6a07f98cce62efddf"
-
-stylefire@^1.1.8:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-1.1.8.tgz#2e26894c5e2877c5100a7b29522d918a6fc4f1e1"
-  dependencies:
-    framesync "^3.0.2"
-    style-value-types "^1.0.0"
 
 subarg@^1.0.0:
   version "1.0.0"
