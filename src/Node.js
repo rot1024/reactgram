@@ -128,7 +128,7 @@ export default class Node extends React.PureComponent {
                   borderBottom: attributes && attributes.length > 0 ? "1px solid #000" : "none"
                 }
               },
-              ...attributes
+              ...attributes || []
             ]}
             onConnectionStart={(e, d) => this.handleConnectionStart(e, d)}
             onConnect={(e, d) => this.handleConnect(e, d)} />
