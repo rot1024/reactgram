@@ -16,16 +16,13 @@ export default class ScrollBox extends React.PureComponent {
     center: PropTypes.bool,
     children: PropTypes.any,
     className: PropTypes.string,
-    component: PropTypes.oneOfType([
-      PropTypes.func,
-      PropTypes.element,
-      PropTypes.string
-    ]),
+    component: PropTypes.any,
     height: PropTypes.number,
     id: PropTypes.string,
     initialX: PropTypes.number,
     initialY: PropTypes.number,
     onScroll: PropTypes.func,
+    render: PropTypes.func,
     style: PropTypes.object,
     width: PropTypes.number
   }
@@ -88,7 +85,9 @@ export default class ScrollBox extends React.PureComponent {
       id,
       style,
       width,
-      height
+      height,
+      render,
+      ...props
     } = this.props;
 
     const sty = {
@@ -98,11 +97,14 @@ export default class ScrollBox extends React.PureComponent {
 
     const ref = e => { this.workspaceElement = e; };
 
-    const C = component ? component({
+    const p = {
       children,
       ref,
-      style: sty
-    }) : (
+      style: sty,
+      ...props
+    };
+
+    const C = render ? render(p) : component ? React.createElement(component, p) : (
       <div ref={ref} style={sty}>{children}</div>
     );
 
@@ -115,7 +117,8 @@ export default class ScrollBox extends React.PureComponent {
           this.scrollDelta(e, e.deltaX, e.deltaY);
         }}
         ref={e => { this.scrollElement = e; }}
-        style={{ ...editorStyle, ...style }}>
+        style={{ ...editorStyle, ...style }}
+        {...props}>
         {C}
       </div>
     );

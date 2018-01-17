@@ -13,7 +13,7 @@ export default () => {
         width={2000}
         height={2000}
         onScroll={(e, d) => console.log("onScroll", d)}
-        component={props => (
+        render={props => (
           <Grid
             backgroundColor="#434343"
             gridType="line"
