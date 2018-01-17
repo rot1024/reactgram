@@ -9,6 +9,7 @@ export default () => {
   storiesOf("ScrollBox", module)
     .add("default", () => (
       <Component
+        center
         width={2000}
         height={2000}
         component={props => (

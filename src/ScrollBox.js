@@ -19,6 +19,7 @@ const workspaceStyle = {
 export default class ScrollBox extends React.PureComponent {
 
   static propTypes = {
+    center: PropTypes.bool,
     children: PropTypes.any,
     className: PropTypes.string,
     component: PropTypes.oneOfType([
@@ -41,6 +42,9 @@ export default class ScrollBox extends React.PureComponent {
     if (this.props.initialY) {
       this.scrollElement.scrollTop = this.props.initialY;
     }
+    if (this.props.center) {
+      this.scrollToCenter();
+    }
   }
 
   scroll(x, y) {
@@ -50,7 +54,6 @@ export default class ScrollBox extends React.PureComponent {
   }
 
   scrollDelta(dx, dy) {
-    if (!this.scrollElement) return;
     this.scroll(
       this.scrollElement.scrollLeft + dx,
       this.scrollElement.scrollTop + dy
@@ -58,9 +61,10 @@ export default class ScrollBox extends React.PureComponent {
   }
 
   scrollToCenter() {
+    const { width, height } = this.props;
     this.scroll(
-      this.scrollElement.offsetLeft + this.scrollElement.clientWidth / 2,
-      this.scrollElement.offsetTop + this.scrollElement.clientHeight / 2
+      (width - this.scrollElement.clientWidth) / 2,
+      (height - this.scrollElement.clientHeight) / 2
     );
   }
 
