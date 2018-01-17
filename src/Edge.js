@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 
 const Edge = ({
   className,
+  debug,
   id,
   strokeColor = "#000",
   strokeWidth = 1,
@@ -29,6 +30,9 @@ const Edge = ({
         width: `${w}px`,
         height: `${h}px`,
         overflow: "visible",
+        ...debug ? {
+          backgroundColor: "rgba(255, 255, 255, 0.5)"
+        } : {},
         ...style
       }}>
       <svg
@@ -56,6 +60,14 @@ const Edge = ({
           strokeLinecap="round"
           filter={shadowRadius > 0 ? "url(#shadow)" : undefined}
           d={`M${x1 - bx + d} ${y1 - by + d} C${ax} ${y1 - by + d},${ax} ${y2 - by + d},${x2 - bx + d} ${y2 - by + d}`} />
+        {debug && (
+          <React.Fragment>
+            <circle cx={x1 - bx + d} cy={y1 - by + d} r="10" fill="red" />
+            <circle cx={ax} cy={y1 - by + d} r="10" fill="yellow" />
+            <circle cx={ax} cy={y2 - by + d} r="10" fill="green" />
+            <circle cx={x2 - bx + d} cy={y2 - by + d} r="10" fill="blue" />
+          </React.Fragment>
+        )}
       </svg>
     </div>
   );
@@ -63,6 +75,7 @@ const Edge = ({
 
 Edge.propTypes = {
   className: PropTypes.string,
+  debug: PropTypes.bool,
   id: PropTypes.string,
   shadowRadius: PropTypes.number,
   strokeColor: PropTypes.string,
