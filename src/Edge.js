@@ -17,8 +17,8 @@ const Edge = ({
   const h = Math.abs(y1 - y2);
   const bx = Math.min(x1, x2);
   const by = Math.min(y1, y2);
-  const ax = w / 2 + bx;
   const d = strokeWidth;
+  const ax = w / 2 + d;
 
   return (
     <div
