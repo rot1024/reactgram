@@ -54,7 +54,7 @@ const Edge = ({
           stroke={strokeColor}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
-          filter={shadowRadius > 0 && "url(#shadow)"}
+          filter={shadowRadius > 0 ? "url(#shadow)" : undefined}
           d={`M${x1 - bx + d} ${y1 - by + d} C${ax} ${y1 - by + d},${ax} ${y2 - by + d},${x2 - bx + d} ${y2 - by + d}`} />
       </svg>
     </div>
