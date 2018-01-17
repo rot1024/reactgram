@@ -6,7 +6,7 @@ import Component from "../Edge";
 export default () => {
 
   storiesOf("Edge", module)
-    .add("default", () => (
+    .addWithJSX("default", () => (
       <div>
         <Component
           x1={0}
