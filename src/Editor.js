@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import ScrollBox from "./ScrollBox";
 import Grid from "./Grid";
 import Node from "./Node";
+import Edge from "./Edge";
 
 export default class Editor extends React.PureComponent {
 
@@ -13,29 +14,41 @@ export default class Editor extends React.PureComponent {
     id: PropTypes.string,
     nodeTypes: PropTypes.object,
     onConnect: PropTypes.func,
+    onNodeDrag: PropTypes.func,
     onNodeDragEnd: PropTypes.func,
     style: PropTypes.object
   }
-
-  // componentDidMount() {
-  //
-  // }
-  //
-  // componentDidUpdate() {
-  //
-  // }
-  //
-  // _calcEdgePositions() {
-  //
-  // }
 
   state = {
     connecting: null,
     connectingEdge: null
   }
 
-  handleConnectionStart({ attribute, type }, n) {
+  scrollElement = null
+
+  workspaceElement = null
+
+  handleMouseMove(e) {
+    if (this.state.connectingEdge) {
+      this.setState({
+        connectingEdge: {
+          // eslint-disable-next-line react/no-access-state-in-setstate
+          ...this.state.connectingEdge,
+          x2: e.clientX + this.scrollElement.scrollLeft,
+          y2: e.clientY + this.scrollElement.scrollTop
+        }
+      });
+    }
+  }
+
+  handleConnectionStart(e, { attribute, type }, n) {
     if (this.state.connecting) return;
+
+    const tr = e.target.getBoundingClientRect();
+    const pr = this.workspaceElement.getBoundingClientRect();
+
+    const x = tr.left - pr.left + tr.width / 2;
+    const y = tr.top - pr.top + tr.height / 2;
 
     this.setState({
       connecting: {
@@ -44,10 +57,10 @@ export default class Editor extends React.PureComponent {
         type
       },
       connectingEdge: {
-        x1: 0,
-        y1: 0,
-        x2: 0,
-        y2: 0
+        x1: x,
+        y1: y,
+        x2: x,
+        y2: y
       }
     });
   }
@@ -56,37 +69,43 @@ export default class Editor extends React.PureComponent {
     const { connecting } = this.state;
     if (!connecting) return;
 
-    if (type === connecting.type) return;
-
     if (
-      connecting.node === n &&
-      connecting.attribute === attribute &&
-      connecting.type === type
-    ) return;
+      type !== connecting.type &&
+      (
+        connecting.node !== n ||
+        connecting.attribute !== attribute ||
+        connecting.type !== type
+      )
+    ) {
+      const input = type === "input" ? {
+        node: n,
+        attribute
+      } : {
+        node: connecting.node,
+        attribute: connecting.attribute
+      };
 
-    const input = type === "input" ? {
-      node: n,
-      attribute
-    } : {
-      node: connecting.node,
-      attribute: connecting.attribute
-    };
+      const output = type === "output" ? {
+        node: n,
+        attribute
+      } : {
+        node: connecting.node,
+        attribute: connecting.attribute
+      };
 
-    const output = type === "output" ? {
-      node: n,
-      attribute
-    } : {
-      node: connecting.node,
-      attribute: connecting.attribute
-    };
-
-    if (this.props.onConnect) {
-      this.props.onConnect({
-        input,
-        output
-      });
+      if (this.props.onConnect) {
+        this.props.onConnect({
+          input,
+          output
+        });
+      }
     }
 
+    this.stopDragging();
+  }
+
+  stopDragging = () => {
+    // eslint-disable-next-line no-invalid-this
     this.setState({
       connecting: null,
       connectingEdge: null
@@ -99,9 +118,14 @@ export default class Editor extends React.PureComponent {
       data,
       id,
       nodeTypes,
+      onNodeDrag,
       onNodeDragEnd,
       style
     } = this.props;
+
+    const {
+      connectingEdge: ce
+    } = this.state;
 
     return (
       <div
@@ -111,10 +135,21 @@ export default class Editor extends React.PureComponent {
         <ScrollBox
           width={2000}
           height={2000}
-          render={props => (
+          scrollRef={e => { this.scrollElement = e; }}
+          onMouseMove={e => this.handleMouseMove(e)}
+          onTouchMove={e => this.handleMouseMove(e)}
+          onMouseUp={this.stopDragging} // eslint-disable-line react/jsx-handler-names
+          onTouchEnd={this.stopDragging} // eslint-disable-line react/jsx-handler-names
+          onTouchCancel={this.stopDragging} // eslint-disable-line react/jsx-handler-names
+          render={({ style: s, ...props }) => (
             <Grid
               backgroundColor="#434343"
               gridType="line"
+              gridRef={e => { this.workspaceElement = e; }}
+              style={{
+                ...s,
+                position: "relative"
+              }}
               {...props} />
           )}>
           {data && data.nodes && data.nodes.map((n, i) => {
@@ -129,8 +164,16 @@ export default class Editor extends React.PureComponent {
                 title={nt.title || n.type}
                 input={nt.input}
                 output={nt.output}
-                onConnectionStart={(e, d) => this.handleConnectionStart(d, n)}
+                onConnectionStart={(e, d) => this.handleConnectionStart(e, d, n)}
                 onConnect={(e, d) => this.handleConnect(d, n)}
+                onDrag={
+                  ({ x, y }) => onNodeDrag && onNodeDrag({
+                    node: n,
+                    index: i,
+                    x,
+                    y
+                  })
+                }
                 onDragEnd={
                   ({ x, y }) => onNodeDragEnd && onNodeDragEnd({
                     node: n,
@@ -142,6 +185,21 @@ export default class Editor extends React.PureComponent {
                 position={{ x: n.x, y: n.y }} />
             );
           })}
+          {ce && (
+            <Edge
+              x1={ce.x1}
+              y1={ce.y1}
+              x2={ce.x2}
+              y2={ce.y2}
+              strokeColor="#fff"
+              strokeWidth={3}
+              style={{
+                position: "absolute",
+                left: `${ce.x1 < ce.x2 ? ce.x1 : ce.x2}px`,
+                top: `${ce.y1 < ce.y2 ? ce.y1 : ce.y2}px`,
+                pointerEvents: "none"
+              }} />
+          )}
         </ScrollBox>
       </div>
     );

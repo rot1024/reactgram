@@ -103,7 +103,7 @@ export default () => {
          data={data}
          nodeTypes={nodeTypes}
          onConnect={this.handleConnect.bind(this)}
-         onNodeDragEnd={a => this.handleNodeMove(a)} />
+         onNodeDrag={a => this.handleNodeMove(a)} />
      );
    }
 
