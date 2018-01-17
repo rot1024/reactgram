@@ -59,6 +59,8 @@ export default class Node extends React.PureComponent {
   }
 
   handleConnect(e, { attribute, index, type }) {
+    e.preventDefault();
+    e.stopPropagation();
     if (this.props.onConnect) {
       this.props.onConnect(e, {
         attribute: index > 0 ? attribute : null,
