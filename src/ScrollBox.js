@@ -96,9 +96,10 @@ export default class ScrollBox extends React.PureComponent {
     const ref = e => { this.workspaceElement = e; };
 
     const C = component ? component({
+      children,
       ref,
       style: sty
-    }, children) : (
+    }) : (
       <div ref={ref} style={sty}>{children}</div>
     );
 
