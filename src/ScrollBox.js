@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const editorStyle = {
+const workspaceStyle = {
   position: "absolute",
   top: "0",
   left: "0",
@@ -23,6 +23,7 @@ export default class ScrollBox extends React.PureComponent {
     initialY: PropTypes.number,
     onScroll: PropTypes.func,
     render: PropTypes.func,
+    scrollRef: PropTypes.func,
     style: PropTypes.object,
     width: PropTypes.number
   }
@@ -83,6 +84,7 @@ export default class ScrollBox extends React.PureComponent {
       className,
       component,
       id,
+      scrollRef,
       style,
       width,
       height,
@@ -116,8 +118,13 @@ export default class ScrollBox extends React.PureComponent {
           e.preventDefault();
           this.scrollDelta(e, e.deltaX, e.deltaY);
         }}
-        ref={e => { this.scrollElement = e; }}
-        style={{ ...editorStyle, ...style }}
+        ref={e => {
+          this.scrollElement = e;
+          if (scrollRef) {
+            scrollRef(e);
+          }
+        }}
+        style={{ ...workspaceStyle, ...style }}
         {...props}>
         {C}
       </div>

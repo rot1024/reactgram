@@ -38,6 +38,7 @@ export default class Grid extends React.PureComponent {
   static propTypes = {
     backgroundColor: PropTypes.string,
     gridColor: PropTypes.string,
+    gridRef: PropTypes.func,
     gridSize: PropTypes.number,
     gridType: PropTypes.oneOf(["line", "dot"]),
     style: PropTypes.object
@@ -47,6 +48,7 @@ export default class Grid extends React.PureComponent {
     const {
       backgroundColor,
       gridColor,
+      gridRef,
       gridSize,
       gridType,
       style,
@@ -58,6 +60,7 @@ export default class Grid extends React.PureComponent {
           ...styles[gridType] ? styles[gridType]({ backgroundColor, gridColor, gridSize }) : {},
           ...style
         }}
+        ref={gridRef}
         {...props} />
     );
   }
