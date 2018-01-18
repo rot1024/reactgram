@@ -40,7 +40,9 @@ export default () => {
      },
      nodeTypes: {
        a: {
-         titile: "Node A",
+         data: {
+           titile: "Node A"
+         },
          input: true,
          output: true,
          attributes: [
@@ -48,7 +50,9 @@ export default () => {
          ]
        },
        b: {
-         title: "Node B",
+         data: {
+           titile: "Node B"
+         },
          input: true,
          output: false,
          attributes: [

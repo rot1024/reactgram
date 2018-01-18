@@ -2,8 +2,28 @@ import React from "react";
 import PropTypes from "prop-types";
 import Draggable from "react-draggable";
 
+import Handle from "./Handle";
 import Attribute from "./Attribute";
 import AttributeList from "./AttributeList";
+import NodeAttribute from "./NodeAttribute";
+import themeable from "./utils/themeable";
+
+const defaultTheme = {
+  ...Handle.defaultTheme,
+  ...Attribute.defaultTheme,
+  attribute: {
+    ...Attribute.defaultTheme.attribute,
+    borderBottom: "1px solid #000"
+  },
+  singleAttribute: {
+    borderBottom: "none"
+  },
+  node: {
+    display: "inline-block",
+    border: "1px solid #000",
+    background: "#fff"
+  }
+};
 
 export default class Node extends React.PureComponent {
 
@@ -13,8 +33,13 @@ export default class Node extends React.PureComponent {
     defaultPosition: PropTypes.shape({ x: PropTypes.number, y: PropTypes.number }),
     draggable: PropTypes.bool,
     handleRefs: PropTypes.object,
-    id: PropTypes.string,
+    handleTheme: PropTypes.any,
     input: PropTypes.bool,
+    nodeAttributeChildren: PropTypes.node,
+    nodeAttributeComponent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
+    nodeAttributeContentTheme: PropTypes.any,
+    nodeAttributeData: PropTypes.any,
+    nodeAttributeRender: PropTypes.func,
     onConnect: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     onConnectionStart: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     onDrag: PropTypes.func,
@@ -23,14 +48,14 @@ export default class Node extends React.PureComponent {
     output: PropTypes.bool,
     position: PropTypes.shape({ x: PropTypes.number, y: PropTypes.number }),
     style: PropTypes.object,
-    title: PropTypes.string
+    theme: PropTypes.any
   }
 
-  static defaultStyle = {
-    display: "inline-block",
-    border: "1px solid #000",
-    background: "#fff"
+  static defaultProps = {
+    theme: defaultTheme
   }
+
+  static defaultTheme = defaultTheme
 
   handleEvent(propName, e, { attribute, index, type }) {
     if (this.props[propName]) {
@@ -66,15 +91,25 @@ export default class Node extends React.PureComponent {
       defaultPosition,
       draggable = true,
       handleRefs,
-      id,
+      nodeAttributeChildren,
+      nodeAttributeComponent,
+      nodeAttributeContentTheme,
+      nodeAttributeData,
+      nodeAttributeRender,
       input,
       onDrag,
       onDragEnd,
       output,
       position,
       style,
-      title
+      theme
     } = this.props;
+
+    const t = themeable("node", theme, className, style);
+
+    const dna =
+      !nodeAttributeChildren || !nodeAttributeComponent || !nodeAttributeRender ?
+        NodeAttribute : null;
 
     return (
       <Draggable
@@ -102,26 +137,25 @@ export default class Node extends React.PureComponent {
         }
         position={position}>
         <div
-          className={className}
-          id={id}
-          style={{
-            ...Node.defaultStyle,
-            ...style
-          }}>
+          {...t("node")}>
           <AttributeList
             attributes={[
               {
                 id: "",
                 input,
                 output,
-                children: title,
-                style: {
-                  borderBottom: attributes && attributes.length > 0 ? "1px solid #000" : "none"
-                }
+                children: dna ? undefined : nodeAttributeChildren,
+                component: dna || nodeAttributeComponent,
+                contentTheme: nodeAttributeContentTheme,
+                data: nodeAttributeData,
+                render: dna ? undefined : nodeAttributeRender,
+                single: !attributes || attributes.length === 0,
+                theme
               },
               ...attributes || []
             ]}
             handleRefs={handleRefs}
+            handleTheme={theme}
             onConnectionStart={(e, d) => this.handleConnectionStart(e, d)}
             onConnect={(e, d) => this.handleConnect(e, d)}
             onHandleClick={(e, d) => this.handleHandleClick(e, d)} />

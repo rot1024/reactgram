@@ -5,21 +5,51 @@ import ScrollBox from "./ScrollBox";
 import Grid from "./Grid";
 import Node from "./Node";
 import Edge from "./Edge";
+import themeable from "./utils/themeable";
+
+const defaultTheme = {
+  editor: {},
+  grid: {},
+  edge: {},
+  edgePath: {},
+  connectingEdge: {},
+  connectingEdgePath: {}
+};
 
 export default class Editor extends React.PureComponent {
 
   static propTypes = {
     className: PropTypes.string,
     data: PropTypes.object,
+    gridBackgroundColor: Grid.propTypes.backgroundColor,
+    gridColor: Grid.propTypes.gridColor,
+    gridSize: Grid.propTypes.gridSize,
+    gridType: Grid.propTypes.gridType,
     id: PropTypes.string,
+    nodeAttributeChildren: PropTypes.node,
+    nodeAttributeComponent: PropTypes.oneOf([PropTypes.element, PropTypes.func]),
+    nodeAttributeContentTheme: PropTypes.any,
+    nodeAttributeRender: PropTypes.func,
+    nodeTheme: PropTypes.any,
     nodeTypes: PropTypes.object,
     onConnect: PropTypes.func,
     onEdgeClick: PropTypes.func,
     onHandleClick: PropTypes.func,
     onNodeDrag: PropTypes.func,
     onNodeDragEnd: PropTypes.func,
-    style: PropTypes.object
+    style: PropTypes.object,
+    theme: PropTypes.any,
+    workspaceHeight: PropTypes.number,
+    workspaceWidth: PropTypes.number
   }
+
+  static defaultProps = {
+    theme: defaultTheme,
+    workspaceHeight: 2000,
+    workspaceWidth: 2000
+  }
+
+  static defaultTheme = defaultTheme
 
   state = {
     connecting: null,
@@ -176,29 +206,42 @@ export default class Editor extends React.PureComponent {
     const {
       className,
       data,
+      gridBackgroundColor,
+      gridColor,
+      gridSize,
+      gridType,
       id,
+      nodeAttributeChildren,
+      nodeAttributeComponent,
+      nodeAttributeContentTheme,
+      nodeAttributeRender,
+      nodeTheme,
       nodeTypes,
       onEdgeClick,
       onNodeDrag,
       onNodeDragEnd,
-      style
+      style,
+      theme,
+      workspaceHeight,
+      workspaceWidth
     } = this.props;
 
     const {
       connectingEdge: ce
     } = this.state;
 
+    const t = themeable("editor", theme, className, style);
+
     const workspaceRect = this.workspaceElement ?
       this.workspaceElement.getBoundingClientRect() : null;
 
     return (
       <div
-        className={className}
         id={id}
-        style={style}>
+        {...t("editor")}>
         <ScrollBox
-          width={2000}
-          height={2000}
+          width={workspaceWidth}
+          height={workspaceHeight}
           scrollRef={e => { this.scrollElement = e; }}
           onMouseMove={e => this.handleMouseMove(e)}
           onTouchMove={e => this.handleMouseMove(e)}
@@ -207,14 +250,16 @@ export default class Editor extends React.PureComponent {
           onTouchCancel={this.stopDragging} // eslint-disable-line react/jsx-handler-names
           render={({ style: s, ...props }) => (
             <Grid
-              backgroundColor="#434343"
-              gridType="line"
+              backgroundColor={gridBackgroundColor}
+              gridColor={gridColor}
+              gridSize={gridSize}
+              gridType={gridType}
               gridRef={e => { this.workspaceElement = e; }}
-              style={{
-                ...s,
-                position: "relative"
-              }}
-              {...props} />
+              {...props}
+              {...t({
+                styleNames: ["grid"],
+                style: s
+              })} />
           )}>
           {data && data.edges && data.edges.map((e, i) => {
 
@@ -245,13 +290,17 @@ export default class Editor extends React.PureComponent {
                   onClick: evt => onEdgeClick && onEdgeClick(evt, {
                     edge: e,
                     index: i
-                  })
+                  }),
+                  ...t("edgePath")
                 }}
-                style={{
-                  position: "absolute",
-                  left: `${x1 < x2 ? x1 : x2}px`,
-                  top: `${y1 < y2 ? y1 : y2}px`
-                }} />
+                {...t({
+                  styleNames: ["edge"],
+                  style: {
+                    position: "absolute",
+                    left: `${x1 < x2 ? x1 : x2}px`,
+                    top: `${y1 < y2 ? y1 : y2}px`
+                  }
+                })} />
             );
           })}
           {data && data.nodes && data.nodes.map((n, i) => {
@@ -268,9 +317,13 @@ export default class Editor extends React.PureComponent {
                 nodeId={n.id}
                 key={n.id}
                 data={n.data}
-                title={nt.title || n.type}
                 // eslint-disable-next-line react/jsx-handler-names
                 handleRefs={this.handleRefs.get(n.id)}
+                nodeAttributeChildren={nodeAttributeChildren}
+                nodeAttributeComponent={nodeAttributeComponent}
+                nodeAttributeContentTheme={nodeAttributeContentTheme}
+                nodeAttributeData={{ type: n.type, ...nt.data }}
+                nodeAttributeRender={nodeAttributeRender}
                 input={nt.input}
                 output={nt.output}
                 onConnectionStart={(e, d) => this.handleConnectionStart(e, d, n)}
@@ -292,7 +345,8 @@ export default class Editor extends React.PureComponent {
                   })
                 }
                 onHandleClick={(e, a) => this.handleHandleClick(e, a, n, i)}
-                position={{ x: n.x, y: n.y }} />
+                position={{ x: n.x, y: n.y }}
+                theme={nodeTheme} />
             );
           })}
           {ce && (
@@ -303,12 +357,16 @@ export default class Editor extends React.PureComponent {
               y2={ce.y2}
               strokeColor="#fff"
               strokeWidth={3}
-              style={{
-                position: "absolute",
-                left: `${ce.x1 < ce.x2 ? ce.x1 : ce.x2}px`,
-                top: `${ce.y1 < ce.y2 ? ce.y1 : ce.y2}px`,
-                pointerEvents: "none"
-              }} />
+              svgPathProps={t("edgePath", "connectingEdgePath")}
+              {...t({
+                styleNames: ["edge", "connectingEdge"],
+                style: {
+                  position: "absolute",
+                  left: `${ce.x1 < ce.x2 ? ce.x1 : ce.x2}px`,
+                  top: `${ce.y1 < ce.y2 ? ce.y1 : ce.y2}px`,
+                  pointerEvents: "none"
+                }
+              })} />
           )}
         </ScrollBox>
       </div>
