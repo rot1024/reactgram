@@ -7,14 +7,18 @@ const Edge = ({
   id,
   strokeColor = "#000",
   strokeWidth = 1,
+  x,
   x1,
   x2,
+  y,
   y1,
   y2,
   shadowRadius = 0,
   style,
   svgPathProps
 }) => {
+  const isAbsolute = typeof x === "number" && typeof y === "number";
+
   const w = Math.abs(x1 - x2);
   const h = Math.abs(y1 - y2);
   const bx = Math.min(x1, x2);
@@ -33,6 +37,12 @@ const Edge = ({
         overflow: "visible",
         ...debug ? {
           backgroundColor: "rgba(255, 0, 0, 0.5)"
+        } : {},
+        ...isAbsolute ? {
+          position: "absolute",
+          top: 0,
+          left: 0,
+          transform: `translate(${x}px, ${y}px)`
         } : {},
         ...style
       }}>
@@ -84,8 +94,10 @@ Edge.propTypes = {
   strokeWidth: PropTypes.number,
   style: PropTypes.object,
   svgPathProps: PropTypes.object,
+  x: PropTypes.number,
   x1: PropTypes.number,
   x2: PropTypes.number,
+  y: PropTypes.number,
   y1: PropTypes.number,
   y2: PropTypes.number
 };

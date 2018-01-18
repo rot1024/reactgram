@@ -238,6 +238,8 @@ export default class Editor extends React.PureComponent {
     const workspaceRect = this.workspaceElement ?
       this.workspaceElement.getBoundingClientRect() : null;
 
+    const edgePathTheme = t("edgePath");
+
     return (
       <ScrollBox
         width={workspaceWidth}
@@ -282,6 +284,8 @@ export default class Editor extends React.PureComponent {
           return (
             <Edge
               key={key}
+              x={x1 < x2 ? x1 : x2}
+              y={y1 < y2 ? y1 : y2}
               x1={x1}
               y1={y1}
               x2={x2}
@@ -294,16 +298,9 @@ export default class Editor extends React.PureComponent {
                   edge: e,
                   index: i
                 }),
-                ...t("edgePath")
+                ...edgePathTheme
               }}
-              {...t({
-                styleNames: ["edge"],
-                style: {
-                  position: "absolute",
-                  left: `${x1 < x2 ? x1 : x2}px`,
-                  top: `${y1 < y2 ? y1 : y2}px`
-                }
-              })} />
+              style={{ position: "absolute" }} />
           );
         })}
         {data && data.nodes && data.nodes.map((n, i) => {
