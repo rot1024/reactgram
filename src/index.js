@@ -5,4 +5,5 @@ export Handle from "./Handle";
 export Attribute from "./Attribute";
 export AttributeList from "./AttributeList";
 export Node from "./Node";
+export NodeAttribute from "./NodeAttribute";
 export Editor from "./Editor";
