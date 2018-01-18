@@ -26,15 +26,20 @@ const Attribute = ({
   output,
   outputHandleRef,
   render,
+  single,
   style,
   theme = Attribute.defaultTheme
 }) => {
   const t = themeable("attribute", theme, className, style);
 
-  const sn = input && output ? "inputOutputAttribute" :
+  const sn = [
+    "attribute",
+    input && output ? "inputOutputAttribute" :
     input ? "inputAttribute" :
     output ? "outputAttribute" :
-    "plainAttribute";
+    "plainAttribute",
+    ...single ? ["singleAttribute"] : []
+  ];
 
   const contentProps = {
     className: contentClassName,
@@ -45,7 +50,7 @@ const Attribute = ({
 
   return (
     <div
-      {...t("attribute", ...sn)}>
+      {...t(...sn)}>
       {input && (
         <Handle
           className={handleClassName}
@@ -107,6 +112,7 @@ Attribute.propTypes = {
   output: PropTypes.bool,
   outputHandleRef: PropTypes.func,
   render: PropTypes.func,
+  single: PropTypes.bool,
   style: PropTypes.object,
   theme: PropTypes.any
 };

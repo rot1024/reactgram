@@ -17,6 +17,7 @@ export default class AttributeList extends React.PureComponent {
       input: PropTypes.bool,
       output: PropTypes.bool,
       render: PropTypes.func,
+      single: PropTypes.bool,
       style: PropTypes.object,
       theme: PropTypes.any
     })),
@@ -95,6 +96,7 @@ export default class AttributeList extends React.PureComponent {
             output={a.output}
             outputHandleRef={handleRefs ? e => { this.setHandleRef(a, "output", e); } : undefined}
             render={a.render}
+            single={a.single}
             style={a.style}
             theme={a.theme}>
             {a.children}
