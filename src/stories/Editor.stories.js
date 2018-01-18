@@ -90,7 +90,8 @@ export default () => {
    }
 
    handleNodeMove({ index, x, y }) {
-     this.setState(({ data }) => ({
+     const { data } = this.state;
+     this.setState({
        data: {
          ...data,
          nodes: [
@@ -103,7 +104,7 @@ export default () => {
            ...data.nodes.slice(index + 1)
          ]
        }
-     }));
+     });
    }
 
    render() {
@@ -116,7 +117,7 @@ export default () => {
          nodeTypes={nodeTypes}
          onConnect={this.handleConnect.bind(this)}
          onEdgeClick={(e, d) => console.log("edgeClick", d)}
-         onNodeDrag={a => this.handleNodeMove(a)}
+         onNodeDrag={(e, a) => this.handleNodeMove(a)}
          onHandleClick={(e, d) => console.log("handleClick", d)}
          theme={theme} />
      );

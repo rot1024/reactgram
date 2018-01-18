@@ -90,7 +90,6 @@ export default class Editor extends React.PureComponent {
     if (this.state.connectingEdge) {
       this.setState({
         connectingEdge: {
-          // eslint-disable-next-line react/no-access-state-in-setstate
           ...this.state.connectingEdge,
           x2: e.clientX + this.scrollElement.scrollLeft,
           y2: e.clientY + this.scrollElement.scrollTop

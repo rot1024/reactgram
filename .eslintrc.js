@@ -348,7 +348,7 @@ module.exports = {
         "react/forbid-component-props": 0,
         "react/forbid-prop-types": 0,
         "react/no-array-index-key": 1,
-        "react/no-access-state-in-setstate": 2,
+        "react/no-access-state-in-setstate": 0,
         "react/no-children-prop": 1,
         "react/no-danger": 2,
         "react/no-danger-with-children": 2,
