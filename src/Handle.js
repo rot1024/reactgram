@@ -1,15 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import themeable from "./utils/themeable";
+
 const Handle = ({
   children,
   className,
   handleRef,
-  id,
   onClick,
   onConnect,
   onConnectionStart,
   style,
+  theme = Handle.defaultTheme
 }) => {
   const startConnect = e => {
     if (onConnectionStart) {
@@ -23,43 +25,42 @@ const Handle = ({
     }
   };
 
+  const t = themeable("handle", theme, className, style);
+
   return (
     <div
-      className={className}
-      id={id}
-      style={{
-        ...Handle.defaultStyle,
-        ...style
-      }}
       onClick={onClick}
       onMouseDown={startConnect}
       onTouchStart={startConnect}
       onMouseUp={endConnect}
       onTouchEnd={endConnect}
-      ref={handleRef}>
+      ref={handleRef}
+      {...t("handle")}>
       {children}
     </div>
   );
 };
 
 Handle.propTypes = {
-  children: PropTypes.any,
+  children: PropTypes.node,
   className: PropTypes.string,
   handleRef: PropTypes.func,
-  id: PropTypes.string,
   onClick: PropTypes.func,
   onConnect: PropTypes.func,
   onConnectionStart: PropTypes.func,
-  style: PropTypes.object
+  style: PropTypes.object,
+  theme: PropTypes.any
 };
 
-Handle.defaultStyle = {
-  display: "inline-block",
-  width: "16px",
-  height: "16px",
-  borderRadius: "50%",
-  border: "1px solid #000",
-  background: "#fff"
+Handle.defaultTheme = {
+  handle: {
+    display: "inline-block",
+    width: "16px",
+    height: "16px",
+    borderRadius: "50%",
+    border: "1px solid #000",
+    background: "#fff"
+  }
 };
 
 export default Handle;
