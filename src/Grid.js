@@ -7,7 +7,7 @@ const venderPrefix = typeof navigator === "undefined" ? "" :
   (/trident/i).test(navigator.userAgent) ? "-ms-" : "";
 
 const lineGridStyle = ({
-  backgroundColor = "rgba(0, 0, 0, 0)",
+  backgroundColor,
   gridColor = "rgba(255, 255, 255, .05)",
   gridSize = 80
 }) => ({
@@ -18,7 +18,7 @@ const lineGridStyle = ({
 });
 
 const dotGridStyle = ({
-  backgroundColor = "rgba(0, 0, 0, 0)",
+  backgroundColor,
   gridColor = "rgba(255, 255, 255, .2)",
   gridSize = 30
 }) => ({
@@ -37,6 +37,7 @@ export default class Grid extends React.PureComponent {
 
   static propTypes = {
     backgroundColor: PropTypes.string,
+    className: PropTypes.string,
     gridColor: PropTypes.string,
     gridRef: PropTypes.func,
     gridSize: PropTypes.number,
@@ -46,7 +47,8 @@ export default class Grid extends React.PureComponent {
 
   render() {
     const {
-      backgroundColor,
+      backgroundColor = "#434343",
+      className,
       gridColor,
       gridRef,
       gridSize,
@@ -56,8 +58,12 @@ export default class Grid extends React.PureComponent {
     } = this.props;
     return (
       <div
+        className={className}
         style={{
-          ...styles[gridType] ? styles[gridType]({ backgroundColor, gridColor, gridSize }) : {},
+          ...styles[gridType] ? styles[gridType]({ backgroundColor, gridColor, gridSize }) : {
+            backgroundColor
+          },
+          position: "relative",
           ...style
         }}
         ref={gridRef}
