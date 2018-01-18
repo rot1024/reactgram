@@ -6,6 +6,7 @@ import themeable from "./utils/themeable";
 const Handle = ({
   children,
   className,
+  connected,
   handleRef,
   input,
   onClick,
@@ -40,7 +41,8 @@ const Handle = ({
       {...t(
         "handle",
         ...input ? ["inputHandle"] : [],
-        ...output ? ["outputHandle"] : []
+        ...output ? ["outputHandle"] : [],
+        ...connected ? ["connectedHandle"] : []
       )}>
       {children}
     </div>
@@ -50,6 +52,7 @@ const Handle = ({
 Handle.propTypes = {
   children: PropTypes.node,
   className: PropTypes.string,
+  connected: PropTypes.bool,
   handleRef: PropTypes.func,
   input: PropTypes.bool,
   onClick: PropTypes.func,
@@ -80,7 +83,8 @@ Handle.defaultTheme = {
     right: "-9px",
     top: "50%",
     marginTop: "-8px"
-  }
+  },
+  connectedHandle: {}
 };
 
 export default Handle;

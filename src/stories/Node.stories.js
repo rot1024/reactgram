@@ -15,14 +15,18 @@ export default () => {
             { id: "3", children: "attr" },
             { id: "4", input: true, output: true, children: "in+out" }
           ]}
-          nodeAttributeData={{ title: "Test" }}
+          nodeAttribute={{
+            data: { title: "Test" }
+          }}
           style={{ marginRight: "20px" }}
           onConnectionStart={(e, d) => console.log("connection start", d)}
           onConnect={(e, d) => console.log("connect", d)} />
         <Node
-          nodeAttributeData={{ title: "Test2" }}
-          input
-          output
+          nodeAttribute={{
+            data: { title: "Test2" },
+            input: true,
+            output: true
+          }}
           onConnectionStart={(e, d) => console.log("connection start", d)}
           onConnect={(e, d) => console.log("connect", d)} />
       </div>

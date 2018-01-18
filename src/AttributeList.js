@@ -3,21 +3,25 @@ import PropTypes from "prop-types";
 
 import Attribute from "./Attribute";
 
+const attributePropTypeShape = {
+  children: PropTypes.node,
+  component: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
+  data: PropTypes.any,
+  id: PropTypes.string.isRequired,
+  input: PropTypes.bool,
+  inputConnected: PropTypes.bool,
+  isNodeAttribute: PropTypes.bool,
+  output: PropTypes.bool,
+  outputConnected: PropTypes.bool,
+  render: PropTypes.func,
+  single: PropTypes.bool,
+  theme: PropTypes.any
+};
+
 export default class AttributeList extends React.PureComponent {
 
   static propTypes = {
-    attributes: PropTypes.arrayOf(PropTypes.shape({
-      children: PropTypes.node,
-      component: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
-      data: PropTypes.any,
-      id: PropTypes.string.isRequired,
-      input: PropTypes.bool,
-      isNodeAttribute: PropTypes.bool,
-      output: PropTypes.bool,
-      render: PropTypes.func,
-      single: PropTypes.bool,
-      theme: PropTypes.any
-    })),
+    attributes: PropTypes.arrayOf(PropTypes.shape(attributePropTypeShape)),
     handleRefs: PropTypes.instanceOf(Map),
     onConnect: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     onConnectionStart: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
@@ -28,6 +32,8 @@ export default class AttributeList extends React.PureComponent {
   static defaultTheme = {
     ...Attribute.defaultTheme
   }
+
+  static attributePropTypeShape = attributePropTypeShape
 
   handleEvent(propName, e, { a, i, type }) {
     if (this.props[propName]) {
@@ -73,6 +79,7 @@ export default class AttributeList extends React.PureComponent {
             contentTheme={a.theme}
             data={a.data}
             input={a.input}
+            inputConnected={a.inputConnected}
             inputHandleRef={handleRefs ? e => { this.setHandleRef(a, "input", e); } : undefined}
             isNodeAttribute={a.isNodeAttribute}
             onInputClick={e => this.handleClick(e, { type: "input", a, i })}
@@ -82,6 +89,7 @@ export default class AttributeList extends React.PureComponent {
             onOutputConnectionStart={e => this.handleConnectionStart(e, { type: "output", a, i })}
             onOutputConnect={e => this.handleConnect(e, { type: "output", a, i })}
             output={a.output}
+            outputConnected={a.outputConnected}
             outputHandleRef={handleRefs ? e => { this.setHandleRef(a, "output", e); } : undefined}
             render={a.render}
             single={a.single}

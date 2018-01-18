@@ -36,18 +36,15 @@ export default class Node extends React.PureComponent {
     draggable: PropTypes.bool,
     handleRefs: PropTypes.object,
     handleTheme: PropTypes.any,
-    input: PropTypes.bool,
-    nodeAttributeChildren: PropTypes.node,
-    nodeAttributeComponent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
-    nodeAttributeData: PropTypes.any,
-    nodeAttributeRender: PropTypes.func,
-    nodeAttributeTheme: PropTypes.any,
+    nodeAttribute: PropTypes.shape({
+      ...AttributeList.attributePropTypeShape,
+      id: PropTypes.any
+    }),
     onConnect: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     onConnectionStart: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     onDrag: PropTypes.func,
     onDragEnd: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     onHandleClick: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
-    output: PropTypes.bool,
     position: PropTypes.shape({ x: PropTypes.number, y: PropTypes.number }),
     style: PropTypes.object,
     theme: PropTypes.any
@@ -93,15 +90,9 @@ export default class Node extends React.PureComponent {
       defaultPosition,
       draggable = true,
       handleRefs,
-      nodeAttributeChildren,
-      nodeAttributeComponent,
-      nodeAttributeData,
-      nodeAttributeRender,
-      nodeAttributeTheme,
-      input,
+      nodeAttribute,
       onDrag,
       onDragEnd,
-      output,
       position,
       style,
       theme
@@ -109,9 +100,9 @@ export default class Node extends React.PureComponent {
 
     const t = themeable("node", theme, className, style);
 
-    const dna =
-      !nodeAttributeChildren || !nodeAttributeComponent || !nodeAttributeRender ?
-        NodeAttribute : null;
+    const dna = nodeAttribute && (
+      !nodeAttribute.children || !nodeAttribute.component || !nodeAttribute.render
+    ) ? NodeAttribute : undefined;
 
     return (
       <Draggable
@@ -143,16 +134,13 @@ export default class Node extends React.PureComponent {
           <AttributeList
             attributes={[
               {
+                ...nodeAttribute,
                 id: "",
-                input,
-                output,
-                children: dna ? undefined : nodeAttributeChildren,
-                component: dna || nodeAttributeComponent,
-                data: nodeAttributeData,
+                ...dna ? {
+                  component: dna
+                } : {},
                 isNodeAttribute: true,
-                render: dna ? undefined : nodeAttributeRender,
-                single: !attributes || attributes.length === 0,
-                theme: nodeAttributeTheme
+                single: !attributes || attributes.length === 0
               },
               ...attributes || []
             ]}

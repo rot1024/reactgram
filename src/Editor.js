@@ -20,7 +20,10 @@ export default class Editor extends React.PureComponent {
       gridType: Grid.propTypes.gridType
     }),
     className: PropTypes.string,
-    data: PropTypes.object,
+    data: PropTypes.shape({
+      edges: PropTypes.array,
+      nodes: PropTypes.array
+    }),
     id: PropTypes.string,
     nodeAttributeChildren: PropTypes.node,
     nodeAttributeComponent: PropTypes.oneOf([PropTypes.element, PropTypes.func]),
@@ -315,19 +318,35 @@ export default class Editor extends React.PureComponent {
 
             return (
               <Node
-                attributes={nt.attributes}
-                nodeId={n.id}
+                attributes={nt.attributes.map(a => ({
+                  ...a,
+                  inputConnected: data.edges && data.edges.some(
+                    e => e.to.node === n.id && e.to.attribute === a.id
+                  ),
+                  outputConnected: data.edges && data.edges.some(
+                    e => e.from.node === n.id && e.from.attribute === a.id
+                  )
+                }))}
                 key={n.id}
                 data={n.data}
                 // eslint-disable-next-line react/jsx-handler-names
                 handleRefs={this.handleRefs.get(n.id)}
-                nodeAttributeChildren={nodeAttributeChildren}
-                nodeAttributeComponent={nodeAttributeComponent}
-                nodeAttributeData={{ type: n.type, ...nt.data }}
-                nodeAttributeRender={nodeAttributeRender}
-                nodeAttributeTheme={nodeAttributeTheme}
-                input={nt.input}
-                output={nt.output}
+                nodeAttribute={{
+                  children: nodeAttributeChildren,
+                  component: nodeAttributeComponent,
+                  data: { type: n.type, ...nt.data },
+                  input: nt.input,
+                  inputConnected: data.edges && data.edges.some(
+                    e => e.to.node === n.id && e.to.attribute === ""
+                  ),
+                  output: nt.output,
+                  outputConnected: data.edges && data.edges.some(
+                    e => e.from.node === n.id && e.from.attribute === ""
+                  ),
+                  render: nodeAttributeRender,
+                  theme: nodeAttributeTheme
+                }}
+                nodeId={n.id}
                 onConnectionStart={(e, d) => this.handleConnectionStart(e, d, n)}
                 onConnect={(e, d) => this.handleConnect(d, n)}
                 onDrag={

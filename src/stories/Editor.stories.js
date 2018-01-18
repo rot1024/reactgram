@@ -138,14 +138,13 @@ export default () => {
           gridType: "line",
         }}
         theme={{
-          ...Node.defaultTheme,
           handle: {
             display: "inline-block",
-            width: "20px",
-            height: "20px",
+            width: "18px",
+            height: "18px",
+            background: "#2B2A2F",
             borderRadius: "50%",
-            background: "#01DAA9",
-            border: "4px solid #2B2A2F",
+            border: "1px solid #01DAA9",
             boxSizing: "border-box"
           },
           inputHandle: {
@@ -160,11 +159,16 @@ export default () => {
             top: "50%",
             marginTop: "-10px"
           },
+          connectedHandle: {
+            background: "#01DAA9",
+            border: "4px solid #2B2A2F"
+          },
           attribute: {
             padding: "5px 20px",
             position: "relative",
             minWidth: "100px"
           },
+          nodeAttribute: {},
           singleAttribute: {},
           node: {
             display: "inline-block",

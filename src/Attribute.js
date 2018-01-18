@@ -14,8 +14,9 @@ const Attribute = ({
   data,
   handleClassName,
   input,
-  isNodeAttribute,
+  inputConnected,
   inputHandleRef,
+  isNodeAttribute,
   onInputClick,
   onInputConnect,
   onInputConnectionStart,
@@ -23,6 +24,7 @@ const Attribute = ({
   onOutputConnect,
   onOutputConnectionStart,
   output,
+  outputConnected,
   outputHandleRef,
   render,
   single,
@@ -54,6 +56,7 @@ const Attribute = ({
       {input && (
         <Handle
           className={handleClassName}
+          connected={inputConnected}
           handleRef={inputHandleRef}
           onClick={onInputClick}
           onConnect={onInputConnect}
@@ -73,6 +76,7 @@ const Attribute = ({
           onConnect={onOutputConnect}
           onConnectionStart={onOutputConnectionStart}
           output
+          connected={outputConnected}
           theme={theme} />
       )}
     </div>
@@ -90,6 +94,7 @@ Attribute.propTypes = {
   handleClassName: PropTypes.string,
   handleStyle: PropTypes.object,
   input: PropTypes.bool,
+  inputConnected: PropTypes.bool,
   inputHandleRef: PropTypes.func,
   isNodeAttribute: PropTypes.bool,
   onInputClick: PropTypes.func,
@@ -99,6 +104,7 @@ Attribute.propTypes = {
   onOutputConnect: PropTypes.func,
   onOutputConnectionStart: PropTypes.func,
   output: PropTypes.bool,
+  outputConnected: PropTypes.bool,
   outputHandleRef: PropTypes.func,
   render: PropTypes.func,
   single: PropTypes.bool,
