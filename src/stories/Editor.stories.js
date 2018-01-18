@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { storiesOf } from "@storybook/react";
 
 import Component from "../Editor";
@@ -6,6 +7,12 @@ import Component from "../Editor";
 export default () => {
 
   class NodeEditor extends React.PureComponent {
+
+    static propTypes = {
+      appearance: Component.propTypes.appearance,
+      nodeTheme: PropTypes.any,
+      theme: PropTypes.any
+    }
 
    state = {
      data: {
@@ -101,15 +108,18 @@ export default () => {
    }
 
    render() {
-     const { data, nodeTypes } = this.state;
+     const { appearance, data, nodeTheme, nodeTypes, theme } = this.state;
      return (
        <Component
+         appearance={appearance}
          data={data}
+         nodeTheme={nodeTheme}
          nodeTypes={nodeTypes}
          onConnect={this.handleConnect.bind(this)}
          onEdgeClick={(e, d) => console.log("edgeClick", d)}
          onNodeDrag={a => this.handleNodeMove(a)}
-         onHandleClick={(e, d) => console.log("handleClick", d)} />
+         onHandleClick={(e, d) => console.log("handleClick", d)}
+         theme={theme} />
      );
    }
 
@@ -118,6 +128,18 @@ export default () => {
   storiesOf("Editor", module)
     .addWithJSX("default", () => (
       <NodeEditor />
+    ))
+    .addWithJSX("themed", () => (
+      <NodeEditor
+        appearance={{
+
+        }}
+        nodeTheme={{
+
+        }}
+        theme={{
+
+        }} />
     ));
 
 };

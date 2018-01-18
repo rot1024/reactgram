@@ -7,24 +7,20 @@ import Node from "./Node";
 import Edge from "./Edge";
 import themeable from "./utils/themeable";
 
-const defaultTheme = {
-  editor: {},
-  grid: {},
-  edge: {},
-  edgePath: {},
-  connectingEdge: {},
-  connectingEdgePath: {}
-};
-
 export default class Editor extends React.PureComponent {
 
   static propTypes = {
+    appearance: PropTypes.shape({
+      edgeShadowRadius: PropTypes.number,
+      edgeStrokeColor: PropTypes.string,
+      edgeStrokeWidth: PropTypes.number,
+      gridBackgroundColor: Grid.propTypes.backgroundColor,
+      gridColor: Grid.propTypes.gridColor,
+      gridSize: Grid.propTypes.gridSize,
+      gridType: Grid.propTypes.gridType
+    }),
     className: PropTypes.string,
     data: PropTypes.object,
-    gridBackgroundColor: Grid.propTypes.backgroundColor,
-    gridColor: Grid.propTypes.gridColor,
-    gridSize: Grid.propTypes.gridSize,
-    gridType: Grid.propTypes.gridType,
     id: PropTypes.string,
     nodeAttributeChildren: PropTypes.node,
     nodeAttributeComponent: PropTypes.oneOf([PropTypes.element, PropTypes.func]),
@@ -44,12 +40,15 @@ export default class Editor extends React.PureComponent {
   }
 
   static defaultProps = {
-    theme: defaultTheme,
+    appearance: {
+      edgeStrokeColor: "#fff",
+      edgeStrokeWidth: 3,
+      gridType: "line"
+    },
+    theme: {},
     workspaceHeight: 2000,
     workspaceWidth: 2000
   }
-
-  static defaultTheme = defaultTheme
 
   state = {
     connecting: null,
@@ -204,12 +203,17 @@ export default class Editor extends React.PureComponent {
 
   render() {
     const {
+      appearance: {
+        edgeShadowRadius,
+        edgeStrokeColor,
+        edgeStrokeWidth,
+        gridBackgroundColor,
+        gridColor,
+        gridSize,
+        gridType
+      },
       className,
       data,
-      gridBackgroundColor,
-      gridColor,
-      gridSize,
-      gridType,
       id,
       nodeAttributeChildren,
       nodeAttributeComponent,
@@ -284,8 +288,9 @@ export default class Editor extends React.PureComponent {
                 y1={y1}
                 x2={x2}
                 y2={y2}
-                strokeColor="#fff"
-                strokeWidth={3}
+                shadowRadius={edgeShadowRadius}
+                strokeColor={edgeStrokeColor}
+                strokeWidth={edgeStrokeWidth}
                 svgPathProps={{
                   onClick: evt => onEdgeClick && onEdgeClick(evt, {
                     edge: e,
@@ -355,8 +360,9 @@ export default class Editor extends React.PureComponent {
               y1={ce.y1}
               x2={ce.x2}
               y2={ce.y2}
-              strokeColor="#fff"
-              strokeWidth={3}
+              shadowRadius={edgeShadowRadius}
+              strokeColor={edgeStrokeColor}
+              strokeWidth={edgeStrokeWidth}
               svgPathProps={t("edgePath", "connectingEdgePath")}
               {...t({
                 styleNames: ["edge", "connectingEdge"],
