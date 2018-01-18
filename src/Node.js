@@ -23,7 +23,13 @@ const defaultTheme = {
   node: {
     display: "inline-block",
     border: "1px solid #000",
-    background: "#fff"
+    background: "#fff",
+    WebkitTouchCallout: "none",
+    WebkitUserSelect: "none",
+    KhtmlUserSelect: "none",
+    MozUserSelect: "none",
+    msUserSelect: "none",
+    userSelect: "none"
   }
 };
 
@@ -130,7 +136,14 @@ export default class Node extends React.PureComponent {
         }
         position={position}>
         <div
-          {...t("node")}>
+          {...t({
+            styleNames: ["node"],
+            style: {
+              left: "0",
+              position: "absolute",
+              top: "0"
+            }
+          })}>
           <AttributeList
             attributes={[
               {

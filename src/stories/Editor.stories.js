@@ -168,13 +168,22 @@ export default () => {
             position: "relative",
             minWidth: "100px"
           },
+          outputAttribute: {
+            textAlign: "right"
+          },
           node: {
             display: "inline-block",
             border: "2px solid #01DAA9",
             borderRadius: "5px",
             color: "#fff",
             background: "#2B2A2F",
-            fontSize: "12px"
+            fontSize: "12px",
+            WebkitTouchCallout: "none",
+            WebkitUserSelect: "none",
+            KhtmlUserSelect: "none",
+            MozUserSelect: "none",
+            msUserSelect: "none",
+            userSelect: "none"
           }
         }} />
     ));
