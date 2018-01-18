@@ -12,7 +12,9 @@ const defaultTheme = {
   ...Handle.defaultTheme,
   ...Attribute.defaultTheme,
   attribute: {
-    ...Attribute.defaultTheme.attribute,
+    ...Attribute.defaultTheme.attribute
+  },
+  nodeAttribute: {
     borderBottom: "1px solid #000"
   },
   singleAttribute: {
@@ -37,9 +39,9 @@ export default class Node extends React.PureComponent {
     input: PropTypes.bool,
     nodeAttributeChildren: PropTypes.node,
     nodeAttributeComponent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
-    nodeAttributeContentTheme: PropTypes.any,
     nodeAttributeData: PropTypes.any,
     nodeAttributeRender: PropTypes.func,
+    nodeAttributeTheme: PropTypes.any,
     onConnect: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     onConnectionStart: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     onDrag: PropTypes.func,
@@ -93,9 +95,9 @@ export default class Node extends React.PureComponent {
       handleRefs,
       nodeAttributeChildren,
       nodeAttributeComponent,
-      nodeAttributeContentTheme,
       nodeAttributeData,
       nodeAttributeRender,
+      nodeAttributeTheme,
       input,
       onDrag,
       onDragEnd,
@@ -146,19 +148,19 @@ export default class Node extends React.PureComponent {
                 output,
                 children: dna ? undefined : nodeAttributeChildren,
                 component: dna || nodeAttributeComponent,
-                contentTheme: nodeAttributeContentTheme,
                 data: nodeAttributeData,
+                isNodeAttribute: true,
                 render: dna ? undefined : nodeAttributeRender,
                 single: !attributes || attributes.length === 0,
-                theme
+                theme: nodeAttributeTheme
               },
               ...attributes || []
             ]}
             handleRefs={handleRefs}
-            handleTheme={theme}
             onConnectionStart={(e, d) => this.handleConnectionStart(e, d)}
             onConnect={(e, d) => this.handleConnect(e, d)}
-            onHandleClick={(e, d) => this.handleHandleClick(e, d)} />
+            onHandleClick={(e, d) => this.handleHandleClick(e, d)}
+            theme={theme} />
         </div>
       </Draggable>
     );

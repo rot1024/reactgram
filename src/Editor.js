@@ -24,8 +24,8 @@ export default class Editor extends React.PureComponent {
     id: PropTypes.string,
     nodeAttributeChildren: PropTypes.node,
     nodeAttributeComponent: PropTypes.oneOf([PropTypes.element, PropTypes.func]),
-    nodeAttributeContentTheme: PropTypes.any,
     nodeAttributeRender: PropTypes.func,
+    nodeAttributeTheme: PropTypes.any,
     nodeTypes: PropTypes.object,
     onConnect: PropTypes.func,
     onEdgeClick: PropTypes.func,
@@ -215,8 +215,8 @@ export default class Editor extends React.PureComponent {
       id,
       nodeAttributeChildren,
       nodeAttributeComponent,
-      nodeAttributeContentTheme,
       nodeAttributeRender,
+      nodeAttributeTheme,
       nodeTypes,
       onEdgeClick,
       onNodeDrag,
@@ -323,9 +323,9 @@ export default class Editor extends React.PureComponent {
                 handleRefs={this.handleRefs.get(n.id)}
                 nodeAttributeChildren={nodeAttributeChildren}
                 nodeAttributeComponent={nodeAttributeComponent}
-                nodeAttributeContentTheme={nodeAttributeContentTheme}
                 nodeAttributeData={{ type: n.type, ...nt.data }}
                 nodeAttributeRender={nodeAttributeRender}
+                nodeAttributeTheme={nodeAttributeTheme}
                 input={nt.input}
                 output={nt.output}
                 onConnectionStart={(e, d) => this.handleConnectionStart(e, d, n)}

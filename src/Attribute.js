@@ -13,9 +13,8 @@ const Attribute = ({
   className,
   data,
   handleClassName,
-  handleStyle,
-  handleTheme,
   input,
+  isNodeAttribute,
   inputHandleRef,
   onInputClick,
   onInputConnect,
@@ -38,6 +37,7 @@ const Attribute = ({
     input ? "inputAttribute" :
     output ? "outputAttribute" :
     "plainAttribute",
+    ...isNodeAttribute ? ["nodeAttribute"] : [],
     ...single ? ["singleAttribute"] : []
   ];
 
@@ -59,7 +59,7 @@ const Attribute = ({
           onConnect={onInputConnect}
           onConnectionStart={onInputConnectionStart}
           input
-          theme={handleTheme} />
+          theme={theme} />
       )}
       {
         component ?
@@ -73,7 +73,7 @@ const Attribute = ({
           onConnect={onOutputConnect}
           onConnectionStart={onOutputConnectionStart}
           output
-          theme={handleTheme} />
+          theme={theme} />
       )}
     </div>
   );
@@ -89,9 +89,9 @@ Attribute.propTypes = {
   data: PropTypes.any,
   handleClassName: PropTypes.string,
   handleStyle: PropTypes.object,
-  handleTheme: PropTypes.any,
   input: PropTypes.bool,
   inputHandleRef: PropTypes.func,
+  isNodeAttribute: PropTypes.bool,
   onInputClick: PropTypes.func,
   onInputConnect: PropTypes.func,
   onInputConnectionStart: PropTypes.func,

@@ -9,25 +9,20 @@ export default class AttributeList extends React.PureComponent {
     attributes: PropTypes.arrayOf(PropTypes.shape({
       children: PropTypes.node,
       component: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
-      contentClassName: PropTypes.string,
-      contentStyle: PropTypes.object,
-      contentTheme: PropTypes.any,
       data: PropTypes.any,
       id: PropTypes.string.isRequired,
       input: PropTypes.bool,
+      isNodeAttribute: PropTypes.bool,
       output: PropTypes.bool,
       render: PropTypes.func,
       single: PropTypes.bool,
-      style: PropTypes.object,
       theme: PropTypes.any
     })),
-    handleClassName: PropTypes.string,
     handleRefs: PropTypes.instanceOf(Map),
-    handleStyle: PropTypes.object,
-    handleTheme: PropTypes.any,
     onConnect: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     onConnectionStart: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
-    onHandleClick: PropTypes.func // eslint-disable-line react/no-unused-prop-types
+    onHandleClick: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
+    theme: PropTypes.any
   }
 
   static defaultTheme = {
@@ -65,10 +60,8 @@ export default class AttributeList extends React.PureComponent {
   render() {
     const {
       attributes,
-      handleClassName,
       handleRefs,
-      handleStyle,
-      handleTheme
+      theme
     } = this.props;
 
     return (
@@ -76,17 +69,12 @@ export default class AttributeList extends React.PureComponent {
         {attributes && attributes.map((a, i) => (
           <Attribute
             key={a.id}
-            className={a.className}
             component={a.component}
-            contentClassName={a.contentClassName}
-            contentStyle={a.contentStyle}
-            contentTheme={a.contentTheme}
+            contentTheme={a.theme}
             data={a.data}
-            handleClassName={handleClassName}
-            handleStyle={handleStyle}
-            handleTheme={handleTheme}
             input={a.input}
             inputHandleRef={handleRefs ? e => { this.setHandleRef(a, "input", e); } : undefined}
+            isNodeAttribute={a.isNodeAttribute}
             onInputClick={e => this.handleClick(e, { type: "input", a, i })}
             onInputConnectionStart={e => this.handleConnectionStart(e, { type: "input", a, i })}
             onInputConnect={e => this.handleConnect(e, { type: "input", a, i })}
@@ -97,8 +85,7 @@ export default class AttributeList extends React.PureComponent {
             outputHandleRef={handleRefs ? e => { this.setHandleRef(a, "output", e); } : undefined}
             render={a.render}
             single={a.single}
-            style={a.style}
-            theme={a.theme}>
+            theme={theme}>
             {a.children}
           </Attribute>
         ))}
