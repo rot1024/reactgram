@@ -42,6 +42,14 @@ export default () => {
           y2={0}
           strokeColor="rgba(255,0,255,0.5)"
           strokeWidth={20} />
+        <Component
+          x1={0}
+          y1={0}
+          x2={200}
+          y2={12}
+          strokeColor="red"
+          strokeWidth={3}
+          debug />
       </div>
     ));
 

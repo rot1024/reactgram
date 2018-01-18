@@ -31,7 +31,7 @@ const Edge = ({
         height: `${h}px`,
         overflow: "visible",
         ...debug ? {
-          backgroundColor: "rgba(255, 255, 255, 0.5)"
+          backgroundColor: "rgba(255, 0, 0, 0.5)"
         } : {},
         ...style
       }}>
@@ -62,10 +62,10 @@ const Edge = ({
           d={`M${x1 - bx + d} ${y1 - by + d} C${ax} ${y1 - by + d},${ax} ${y2 - by + d},${x2 - bx + d} ${y2 - by + d}`} />
         {debug && (
           <React.Fragment>
-            <circle cx={x1 - bx + d} cy={y1 - by + d} r="10" fill="red" />
-            <circle cx={ax} cy={y1 - by + d} r="10" fill="yellow" />
-            <circle cx={ax} cy={y2 - by + d} r="10" fill="green" />
-            <circle cx={x2 - bx + d} cy={y2 - by + d} r="10" fill="blue" />
+            <circle cx={x1 - bx + d} cy={y1 - by + d} r="3" fill="red" />
+            <circle cx={ax} cy={y1 - by + d} r="3" fill="yellow" />
+            <circle cx={ax} cy={y2 - by + d} r="3" fill="green" />
+            <circle cx={x2 - bx + d} cy={y2 - by + d} r="3" fill="blue" />
           </React.Fragment>
         )}
       </svg>
