@@ -21,12 +21,38 @@ export default class Editor extends React.PureComponent {
 
   state = {
     connecting: null,
-    connectingEdge: null
+    connectingEdge: null,
+    rendered: false
+  }
+
+  componentDidMount() {
+    if (!this.state.rendered) {
+      // eslint-disable-next-line react/no-did-mount-set-state
+      this.setState({
+        rendered: true
+      });
+    }
+  }
+
+  componentWillReceiveProps() {
+    this.handleRefs = new Map();
+    this.setState({ rendered: false });
+  }
+
+  componentDidUpdate() {
+    if (!this.state.rendered) {
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({
+        rendered: true
+      });
+    }
   }
 
   scrollElement = null
 
   workspaceElement = null
+
+  handleRefs = new Map()
 
   handleMouseMove(e) {
     if (this.state.connectingEdge) {
@@ -65,43 +91,62 @@ export default class Editor extends React.PureComponent {
     });
   }
 
-  handleConnect({ attribute, type }, n) {
+  handleConnect({ attribute, type }, node) {
     const { connecting } = this.state;
     if (!connecting) return;
 
     if (
       type !== connecting.type &&
       (
-        connecting.node !== n ||
+        connecting.node !== node ||
         connecting.attribute !== attribute ||
         connecting.type !== type
       )
     ) {
-      const input = type === "input" ? {
-        node: n,
-        attribute
+      const from = type === "output" ? {
+        node: node.id,
+        attribute: attribute ? attribute.id : ""
       } : {
-        node: connecting.node,
-        attribute: connecting.attribute
+        node: connecting.node.id,
+        attribute: connecting.attribute ? connecting.attribute.id : ""
       };
 
-      const output = type === "output" ? {
-        node: n,
-        attribute
+      const to = type === "input" ? {
+        node: node.id,
+        attribute: attribute ? attribute.id : ""
       } : {
-        node: connecting.node,
-        attribute: connecting.attribute
+        node: connecting.node.id,
+        attribute: connecting.attribute ? connecting.attribute.id : ""
       };
 
       if (this.props.onConnect) {
         this.props.onConnect({
-          input,
-          output
+          from,
+          to
         });
       }
     }
 
     this.stopDragging();
+  }
+
+  getHandleElement(edge) {
+    if (!this.handleRefs || !this.state.rendered) return null;
+
+    const fa = this.handleRefs.get(edge.from.node);
+    const ta = this.handleRefs.get(edge.to.node);
+
+    if (!fa || !ta) return null;
+
+    const fh = fa.get(edge.from.attribute);
+    const th = ta.get(edge.to.attribute);
+
+    if (!fh || !th) return null;
+
+    return {
+      from: fh.output,
+      to: th.input
+    };
   }
 
   stopDragging = () => {
@@ -126,6 +171,9 @@ export default class Editor extends React.PureComponent {
     const {
       connectingEdge: ce
     } = this.state;
+
+    const workspaceRect = this.workspaceElement ?
+      this.workspaceElement.getBoundingClientRect() : null;
 
     return (
       <div
@@ -152,9 +200,47 @@ export default class Editor extends React.PureComponent {
               }}
               {...props} />
           )}>
+          {data && data.edges && data.edges.map(e => {
+
+            const elem = this.getHandleElement(e);
+
+            if (!elem) return null;
+
+            const fromRect = elem.from.getBoundingClientRect();
+            const toRect = elem.to.getBoundingClientRect();
+
+            const x1 = fromRect.left - workspaceRect.left + fromRect.width / 2;
+            const y1 = fromRect.top - workspaceRect.top + fromRect.height / 2;
+            const x2 = toRect.left - workspaceRect.left + toRect.width / 2;
+            const y2 = toRect.top - workspaceRect.top + toRect.height / 2;
+
+            const key = `${e.from.node}_${e.from.attribute}_${e.to.node}_${e.to.attribute}`;
+
+            return (
+              <Edge
+                key={key}
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                strokeColor="#fff"
+                strokeWidth={3}
+                style={{
+                  position: "absolute",
+                  left: `${x1 < x2 ? x1 : x2}px`,
+                  top: `${y1 < y2 ? y1 : y2}px`,
+                  pointerEvents: "none"
+                }} />
+            );
+          })}
           {data && data.nodes && data.nodes.map((n, i) => {
             const nt = nodeTypes && n.type && nodeTypes[n.type];
             if (!nt) return null;
+
+            if (!this.handleRefs.has(n.id)) {
+              this.handleRefs.set(n.id, new Map());
+            }
+
             return (
               <Node
                 attributes={nt.attributes}
@@ -162,6 +248,8 @@ export default class Editor extends React.PureComponent {
                 key={n.id}
                 data={n.data}
                 title={nt.title || n.type}
+                // eslint-disable-next-line react/jsx-handler-names
+                handleRefs={this.handleRefs.get(n.id)}
                 input={nt.input}
                 output={nt.output}
                 onConnectionStart={(e, d) => this.handleConnectionStart(e, d, n)}

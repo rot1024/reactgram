@@ -19,6 +19,7 @@ export default class Node extends React.PureComponent {
     defaultPosition: PropTypes.shape({ x: PropTypes.number, y: PropTypes.number }),
     draggable: PropTypes.bool,
     // icon: PropTypes.any,
+    handleRefs: PropTypes.object,
     id: PropTypes.string,
     input: PropTypes.bool,
     onConnect: PropTypes.func,
@@ -36,14 +37,6 @@ export default class Node extends React.PureComponent {
     border: "1px solid #000",
     background: "#fff"
   }
-
-  // componentDidMount() {
-  //
-  // }
-
-  // componentDidUpdate() {
-  //
-  // }
 
   handleConnectionStart(e, { attribute, index, type }) {
     e.preventDefault();
@@ -77,6 +70,7 @@ export default class Node extends React.PureComponent {
       className,
       defaultPosition,
       draggable = true,
+      handleRefs,
       id,
       input,
       onDrag,
@@ -132,6 +126,7 @@ export default class Node extends React.PureComponent {
               },
               ...attributes || []
             ]}
+            handleRefs={handleRefs}
             onConnectionStart={(e, d) => this.handleConnectionStart(e, d)}
             onConnect={(e, d) => this.handleConnect(e, d)} />
         </div>

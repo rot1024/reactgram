@@ -27,11 +27,11 @@ export default () => {
        ],
        edges: [
          {
-           input: {
+           from: {
              node: "x",
              attribute: ""
            },
-           output: {
+           to: {
              node: "y",
              attribute: ""
            }
@@ -58,21 +58,21 @@ export default () => {
      }
    }
 
-   handleConnect({ input, output }) {
+   handleConnect({ from, to }) {
      this.setState(({ data }) => (
-       data.edges.some(e => e.input.node === input.node &&
-         e.input.attribute === input.attribute &&
-         e.output.node === output.node &&
-         e.output.attribute === output.attribute)
-     ) ? console.log("the edge already exists", { input, output }) || {} :
-       console.log("new edge is created!", { input, output }) || {
+       data.edges.some(e => e.from.node === from.node &&
+         e.from.attribute === from.attribute &&
+         e.to.node === to.node &&
+         e.to.attribute === to.attribute)
+     ) ? console.warn("the edge already exists", { from, to }) || {} :
+       console.log("new edge is created!", { from, to }) || {
          data: {
            ...data,
            edges: [
              ...data.edges,
              {
-               input: { node: input.node, attribute: input.attribute },
-               output: { node: output.node, attribute: output.attribute }
+               from: { node: from.node, attribute: from.attribute },
+               to: { node: to.node, attribute: to.attribute }
              }
            ]
          }

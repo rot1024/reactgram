@@ -13,6 +13,7 @@ export default class AttributeList extends React.PureComponent {
       output: PropTypes.bool,
       style: PropTypes.object
     })),
+    handleRefs: PropTypes.instanceOf(Map),
     onConnect: PropTypes.func,
     onConnectionStart: PropTypes.func,
   }
@@ -29,9 +30,20 @@ export default class AttributeList extends React.PureComponent {
     }
   }
 
+  setHandleRef(a, type, e) {
+    const { handleRefs } = this.props;
+    if (!handleRefs) return;
+
+    if (!handleRefs.has(a.id)) {
+      handleRefs.set(a.id, { input: null, output: null });
+    }
+    handleRefs.get(a.id)[type] = e;
+  }
+
   render() {
     const {
-      attributes
+      attributes,
+      handleRefs
     } = this.props;
 
     return (
@@ -42,11 +54,13 @@ export default class AttributeList extends React.PureComponent {
             component={a.component}
             data={a.data}
             input={a.input}
+            inputHandleRef={handleRefs ? e => { this.setHandleRef(a, "input", e); } : undefined}
             onInputConnectionStart={e => this.handleConnectionStart(e, { type: "input", a, i })}
             onInputConnect={e => this.handleConnect(e, { type: "input", a, i })}
             onOutputConnectionStart={e => this.handleConnectionStart(e, { type: "output", a, i })}
             onOutputConnect={e => this.handleConnect(e, { type: "output", a, i })}
             output={a.output}
+            outputHandleRef={handleRefs ? e => { this.setHandleRef(a, "output", e); } : undefined}
             render={a.render}
             style={a.style}>
             {a.children}
