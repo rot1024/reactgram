@@ -27,13 +27,13 @@ const Edge = ({
   const ax = w / 2 + d;
 
   return (
-    <div
+    <svg
       className={className}
       id={id}
+      width={w + d * 2}
+      height={h + d * 2}
       style={{
         display: "inline-block",
-        width: `${w}px`,
-        height: `${h}px`,
         overflow: "visible",
         ...debug ? {
           backgroundColor: "rgba(255, 0, 0, 0.5)"
@@ -42,46 +42,44 @@ const Edge = ({
           position: "absolute",
           top: 0,
           left: 0,
-          transform: `translate(${x}px, ${y}px)`
-        } : {},
+          transform: `translate(${x - d}px, ${y - d}px)`
+        } : {
+          transform: `translate(${-d}px, -${-d}px)`
+        },
         ...style
-      }}>
-      <svg
-        style={{ margin: `${-d}px 0 0 ${-d}px` }}
-        width={w + d * 2}
-        height={h + d * 2}
-        xmlns="http://www.w3.org/2000/svg">
-        {shadowRadius > 0 && (
-          <defs>
-            <filter id="shadow" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-              <feComponentTransfer in="SourceAlpha">
-                <feFuncR type="discrete" tableValues="0" />
-                <feFuncG type="discrete" tableValues="0" />
-                <feFuncB type="discrete" tableValues="0" />
-              </feComponentTransfer>
-              <feGaussianBlur stdDeviation={2} result="r" />
-              <feComposite in="SourceGraphic" in2="r" operator="over" />
-            </filter>
-          </defs>
-        )}
-        <path
-          fill="none"
-          stroke={strokeColor}
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          filter={shadowRadius > 0 ? "url(#shadow)" : undefined}
-          d={`M${x1 - bx + d} ${y1 - by + d} C${ax} ${y1 - by + d},${ax} ${y2 - by + d},${x2 - bx + d} ${y2 - by + d}`}
-          {...svgPathProps} />
-        {debug && (
-          <React.Fragment>
-            <circle cx={x1 - bx + d} cy={y1 - by + d} r="3" fill="red" />
-            <circle cx={ax} cy={y1 - by + d} r="3" fill="yellow" />
-            <circle cx={ax} cy={y2 - by + d} r="3" fill="green" />
-            <circle cx={x2 - bx + d} cy={y2 - by + d} r="3" fill="blue" />
-          </React.Fragment>
-        )}
-      </svg>
-    </div>
+      }}
+      viewBox={`0 0 ${w + d * 2} ${h + d * 2}`}
+      xmlns="http://www.w3.org/2000/svg">
+      {shadowRadius > 0 && (
+        <defs>
+          <filter id="shadow" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+            <feComponentTransfer in="SourceAlpha">
+              <feFuncR type="discrete" tableValues="0" />
+              <feFuncG type="discrete" tableValues="0" />
+              <feFuncB type="discrete" tableValues="0" />
+            </feComponentTransfer>
+            <feGaussianBlur stdDeviation={2} result="r" />
+            <feComposite in="SourceGraphic" in2="r" operator="over" />
+          </filter>
+        </defs>
+      )}
+      <path
+        fill="none"
+        stroke={strokeColor}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        filter={shadowRadius > 0 ? "url(#shadow)" : undefined}
+        d={`M${x1 - bx + d} ${y1 - by + d} C${ax} ${y1 - by + d},${ax} ${y2 - by + d},${x2 - bx + d} ${y2 - by + d}`}
+        {...svgPathProps} />
+      {debug && (
+        <React.Fragment>
+          <circle cx={x1 - bx + d} cy={y1 - by + d} r="3" fill="red" />
+          <circle cx={ax} cy={y1 - by + d} r="3" fill="yellow" />
+          <circle cx={ax} cy={y2 - by + d} r="3" fill="green" />
+          <circle cx={x2 - bx + d} cy={y2 - by + d} r="3" fill="blue" />
+        </React.Fragment>
+      )}
+    </svg>
   );
 };
 
