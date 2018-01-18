@@ -240,158 +240,156 @@ export default class Editor extends React.PureComponent {
       this.workspaceElement.getBoundingClientRect() : null;
 
     return (
-      <div
+      <ScrollBox
+        width={workspaceWidth}
+        height={workspaceHeight}
+        scrollRef={e => { this.scrollElement = e; }}
         id={id}
-        {...t("editor")}>
-        <ScrollBox
-          width={workspaceWidth}
-          height={workspaceHeight}
-          scrollRef={e => { this.scrollElement = e; }}
-          onMouseMove={e => this.handleMouseMove(e)}
-          onTouchMove={e => this.handleMouseMove(e)}
-          onMouseUp={this.stopDragging} // eslint-disable-line react/jsx-handler-names
-          onTouchEnd={this.stopDragging} // eslint-disable-line react/jsx-handler-names
-          onTouchCancel={this.stopDragging} // eslint-disable-line react/jsx-handler-names
-          render={({ style: s, ...props }) => (
-            <Grid
-              backgroundColor={gridBackgroundColor}
-              gridColor={gridColor}
-              gridSize={gridSize}
-              gridType={gridType}
-              gridRef={e => { this.workspaceElement = e; }}
-              {...props}
-              {...t({
-                styleNames: ["grid"],
-                style: s
-              })} />
-          )}>
-          {data && data.edges && data.edges.map((e, i) => {
+        onMouseMove={e => this.handleMouseMove(e)}
+        onTouchMove={e => this.handleMouseMove(e)}
+        onMouseUp={this.stopDragging} // eslint-disable-line react/jsx-handler-names
+        onTouchEnd={this.stopDragging} // eslint-disable-line react/jsx-handler-names
+        onTouchCancel={this.stopDragging} // eslint-disable-line react/jsx-handler-names
+        render={({ style: s, ...props }) => (
+          <Grid
+            backgroundColor={gridBackgroundColor}
+            gridColor={gridColor}
+            gridSize={gridSize}
+            gridType={gridType}
+            gridRef={e => { this.workspaceElement = e; }}
+            {...props}
+            {...t({
+              styleNames: ["grid"],
+              style: s
+            })} />
+        )}
+        theme={theme}>
+        {data && data.edges && data.edges.map((e, i) => {
 
-            const elem = this.getHandleElement(e);
+          const elem = this.getHandleElement(e);
 
-            if (!elem) return null;
+          if (!elem) return null;
 
-            const fromRect = elem.from.getBoundingClientRect();
-            const toRect = elem.to.getBoundingClientRect();
+          const fromRect = elem.from.getBoundingClientRect();
+          const toRect = elem.to.getBoundingClientRect();
 
-            const x1 = fromRect.left - workspaceRect.left + fromRect.width / 2;
-            const y1 = fromRect.top - workspaceRect.top + fromRect.height / 2;
-            const x2 = toRect.left - workspaceRect.left + toRect.width / 2;
-            const y2 = toRect.top - workspaceRect.top + toRect.height / 2;
+          const x1 = fromRect.left - workspaceRect.left + fromRect.width / 2;
+          const y1 = fromRect.top - workspaceRect.top + fromRect.height / 2;
+          const x2 = toRect.left - workspaceRect.left + toRect.width / 2;
+          const y2 = toRect.top - workspaceRect.top + toRect.height / 2;
 
-            const key = `${e.from.node}_${e.from.attribute}_${e.to.node}_${e.to.attribute}`;
+          const key = `${e.from.node}_${e.from.attribute}_${e.to.node}_${e.to.attribute}`;
 
-            return (
-              <Edge
-                key={key}
-                x1={x1}
-                y1={y1}
-                x2={x2}
-                y2={y2}
-                shadowRadius={edgeShadowRadius}
-                strokeColor={edgeStrokeColor}
-                strokeWidth={edgeStrokeWidth}
-                svgPathProps={{
-                  onClick: evt => onEdgeClick && onEdgeClick(evt, {
-                    edge: e,
-                    index: i
-                  }),
-                  ...t("edgePath")
-                }}
-                {...t({
-                  styleNames: ["edge"],
-                  style: {
-                    position: "absolute",
-                    left: `${x1 < x2 ? x1 : x2}px`,
-                    top: `${y1 < y2 ? y1 : y2}px`
-                  }
-                })} />
-            );
-          })}
-          {data && data.nodes && data.nodes.map((n, i) => {
-            const nt = nodeTypes && n.type && nodeTypes[n.type];
-            if (!nt) return null;
-
-            if (!this.handleRefs.has(n.id)) {
-              this.handleRefs.set(n.id, new Map());
-            }
-
-            return (
-              <Node
-                attributes={nt.attributes.map(a => ({
-                  ...a,
-                  inputConnected: data.edges && data.edges.some(
-                    e => e.to.node === n.id && e.to.attribute === a.id
-                  ),
-                  outputConnected: data.edges && data.edges.some(
-                    e => e.from.node === n.id && e.from.attribute === a.id
-                  )
-                }))}
-                key={n.id}
-                data={n.data}
-                // eslint-disable-next-line react/jsx-handler-names
-                handleRefs={this.handleRefs.get(n.id)}
-                nodeAttribute={{
-                  children: nodeAttributeChildren,
-                  component: nodeAttributeComponent,
-                  data: { type: n.type, ...nt.data },
-                  input: nt.input,
-                  inputConnected: data.edges && data.edges.some(
-                    e => e.to.node === n.id && e.to.attribute === ""
-                  ),
-                  output: nt.output,
-                  outputConnected: data.edges && data.edges.some(
-                    e => e.from.node === n.id && e.from.attribute === ""
-                  ),
-                  render: nodeAttributeRender,
-                  theme: nodeAttributeTheme
-                }}
-                nodeId={n.id}
-                onConnectionStart={(e, d) => this.handleConnectionStart(e, d, n)}
-                onConnect={(e, d) => this.handleConnect(d, n)}
-                onDrag={
-                  ({ x, y }) => onNodeDrag && onNodeDrag({
-                    node: n,
-                    index: i,
-                    x,
-                    y
-                  })
-                }
-                onDragEnd={
-                  ({ x, y }) => onNodeDragEnd && onNodeDragEnd({
-                    node: n,
-                    index: i,
-                    x,
-                    y
-                  })
-                }
-                onHandleClick={(e, a) => this.handleHandleClick(e, a, n, i)}
-                position={{ x: n.x, y: n.y }}
-                theme={theme} />
-            );
-          })}
-          {ce && (
+          return (
             <Edge
-              x1={ce.x1}
-              y1={ce.y1}
-              x2={ce.x2}
-              y2={ce.y2}
+              key={key}
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
               shadowRadius={edgeShadowRadius}
               strokeColor={edgeStrokeColor}
               strokeWidth={edgeStrokeWidth}
-              svgPathProps={t("edgePath", "connectingEdgePath")}
+              svgPathProps={{
+                onClick: evt => onEdgeClick && onEdgeClick(evt, {
+                  edge: e,
+                  index: i
+                }),
+                ...t("edgePath")
+              }}
               {...t({
-                styleNames: ["edge", "connectingEdge"],
+                styleNames: ["edge"],
                 style: {
                   position: "absolute",
-                  left: `${ce.x1 < ce.x2 ? ce.x1 : ce.x2}px`,
-                  top: `${ce.y1 < ce.y2 ? ce.y1 : ce.y2}px`,
-                  pointerEvents: "none"
+                  left: `${x1 < x2 ? x1 : x2}px`,
+                  top: `${y1 < y2 ? y1 : y2}px`
                 }
               })} />
-          )}
-        </ScrollBox>
-      </div>
+          );
+        })}
+        {data && data.nodes && data.nodes.map((n, i) => {
+          const nt = nodeTypes && n.type && nodeTypes[n.type];
+          if (!nt) return null;
+
+          if (!this.handleRefs.has(n.id)) {
+            this.handleRefs.set(n.id, new Map());
+          }
+
+          return (
+            <Node
+              attributes={nt.attributes.map(a => ({
+                ...a,
+                inputConnected: data.edges && data.edges.some(
+                  e => e.to.node === n.id && e.to.attribute === a.id
+                ),
+                outputConnected: data.edges && data.edges.some(
+                  e => e.from.node === n.id && e.from.attribute === a.id
+                )
+              }))}
+              key={n.id}
+              data={n.data}
+              // eslint-disable-next-line react/jsx-handler-names
+              handleRefs={this.handleRefs.get(n.id)}
+              nodeAttribute={{
+                children: nodeAttributeChildren,
+                component: nodeAttributeComponent,
+                data: { type: n.type, ...nt.data },
+                input: nt.input,
+                inputConnected: data.edges && data.edges.some(
+                  e => e.to.node === n.id && e.to.attribute === ""
+                ),
+                output: nt.output,
+                outputConnected: data.edges && data.edges.some(
+                  e => e.from.node === n.id && e.from.attribute === ""
+                ),
+                render: nodeAttributeRender,
+                theme: nodeAttributeTheme
+              }}
+              nodeId={n.id}
+              onConnectionStart={(e, d) => this.handleConnectionStart(e, d, n)}
+              onConnect={(e, d) => this.handleConnect(d, n)}
+              onDrag={
+                ({ x, y }) => onNodeDrag && onNodeDrag({
+                  node: n,
+                  index: i,
+                  x,
+                  y
+                })
+              }
+              onDragEnd={
+                ({ x, y }) => onNodeDragEnd && onNodeDragEnd({
+                  node: n,
+                  index: i,
+                  x,
+                  y
+                })
+              }
+              onHandleClick={(e, a) => this.handleHandleClick(e, a, n, i)}
+              position={{ x: n.x, y: n.y }}
+              theme={theme} />
+          );
+        })}
+        {ce && (
+          <Edge
+            x1={ce.x1}
+            y1={ce.y1}
+            x2={ce.x2}
+            y2={ce.y2}
+            shadowRadius={edgeShadowRadius}
+            strokeColor={edgeStrokeColor}
+            strokeWidth={edgeStrokeWidth}
+            svgPathProps={t("edgePath", "connectingEdgePath")}
+            {...t({
+              styleNames: ["edge", "connectingEdge"],
+              style: {
+                position: "absolute",
+                left: `${ce.x1 < ce.x2 ? ce.x1 : ce.x2}px`,
+                top: `${ce.y1 < ce.y2 ? ce.y1 : ce.y2}px`,
+                pointerEvents: "none"
+              }
+            })} />
+        )}
+      </ScrollBox>
     );
   }
 

@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { storiesOf } from "@storybook/react";
 
 import Component from "../Editor";
-import Node from "../Node";
 
 export default () => {
 
@@ -168,8 +167,6 @@ export default () => {
             position: "relative",
             minWidth: "100px"
           },
-          nodeAttribute: {},
-          singleAttribute: {},
           node: {
             display: "inline-block",
             border: "2px solid #01DAA9",

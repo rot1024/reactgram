@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import themeable from "./utils/themeable";
+
 const workspaceStyle = {
   position: "absolute",
   top: "0",
@@ -25,6 +27,7 @@ export default class ScrollBox extends React.PureComponent {
     render: PropTypes.func,
     scrollRef: PropTypes.func,
     style: PropTypes.object,
+    theme: PropTypes.any,
     width: PropTypes.number
   }
 
@@ -86,6 +89,7 @@ export default class ScrollBox extends React.PureComponent {
       id,
       scrollRef,
       style,
+      theme,
       width,
       height,
       render,
@@ -110,9 +114,10 @@ export default class ScrollBox extends React.PureComponent {
       <div ref={ref} style={sty}>{children}</div>
     );
 
+    const t = themeable("scrollBox", theme, className, style);
+
     return (
       <div
-        className={className}
         id={id}
         onWheel={e => {
           e.preventDefault();
@@ -124,7 +129,10 @@ export default class ScrollBox extends React.PureComponent {
             scrollRef(e);
           }
         }}
-        style={{ ...workspaceStyle, ...style }}
+        {...t({
+          styleNames: ["scrollBox"],
+          style: workspaceStyle
+        })}
         {...props}>
         {C}
       </div>
