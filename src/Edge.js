@@ -12,7 +12,8 @@ const Edge = ({
   y1,
   y2,
   shadowRadius = 0,
-  style
+  style,
+  svgPathProps
 }) => {
   const w = Math.abs(x1 - x2);
   const h = Math.abs(y1 - y2);
@@ -59,7 +60,8 @@ const Edge = ({
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           filter={shadowRadius > 0 ? "url(#shadow)" : undefined}
-          d={`M${x1 - bx + d} ${y1 - by + d} C${ax} ${y1 - by + d},${ax} ${y2 - by + d},${x2 - bx + d} ${y2 - by + d}`} />
+          d={`M${x1 - bx + d} ${y1 - by + d} C${ax} ${y1 - by + d},${ax} ${y2 - by + d},${x2 - bx + d} ${y2 - by + d}`}
+          {...svgPathProps} />
         {debug && (
           <React.Fragment>
             <circle cx={x1 - bx + d} cy={y1 - by + d} r="3" fill="red" />
@@ -81,10 +83,11 @@ Edge.propTypes = {
   strokeColor: PropTypes.string,
   strokeWidth: PropTypes.number,
   style: PropTypes.object,
+  svgPathProps: PropTypes.object,
   x1: PropTypes.number,
   x2: PropTypes.number,
   y1: PropTypes.number,
-  y2: PropTypes.number,
+  y2: PropTypes.number
 };
 
 export default Edge;

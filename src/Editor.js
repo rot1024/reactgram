@@ -14,6 +14,7 @@ export default class Editor extends React.PureComponent {
     id: PropTypes.string,
     nodeTypes: PropTypes.object,
     onConnect: PropTypes.func,
+    onEdgeClick: PropTypes.func,
     onHandleClick: PropTypes.func,
     onNodeDrag: PropTypes.func,
     onNodeDragEnd: PropTypes.func,
@@ -177,6 +178,7 @@ export default class Editor extends React.PureComponent {
       data,
       id,
       nodeTypes,
+      onEdgeClick,
       onNodeDrag,
       onNodeDragEnd,
       style
@@ -214,7 +216,7 @@ export default class Editor extends React.PureComponent {
               }}
               {...props} />
           )}>
-          {data && data.edges && data.edges.map(e => {
+          {data && data.edges && data.edges.map((e, i) => {
 
             const elem = this.getHandleElement(e);
 
@@ -239,11 +241,16 @@ export default class Editor extends React.PureComponent {
                 y2={y2}
                 strokeColor="#fff"
                 strokeWidth={3}
+                svgPathProps={{
+                  onClick: evt => onEdgeClick && onEdgeClick(evt, {
+                    edge: e,
+                    index: i
+                  })
+                }}
                 style={{
                   position: "absolute",
                   left: `${x1 < x2 ? x1 : x2}px`,
-                  top: `${y1 < y2 ? y1 : y2}px`,
-                  pointerEvents: "none"
+                  top: `${y1 < y2 ? y1 : y2}px`
                 }} />
             );
           })}
