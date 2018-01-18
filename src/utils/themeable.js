@@ -1,7 +1,7 @@
 import themeable from "react-themeable";
 
 const enhancedThemeable = (defaultStyleName, theme, className, style) => {
-  const t = themeable(theme);
+  const t = themeable(theme || {});
   let key = 1;
 
   return (...sn) => {
