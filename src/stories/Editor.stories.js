@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { storiesOf } from "@storybook/react";
 
 import Component from "../Editor";
+import Node from "../Node";
 
 export default () => {
 
@@ -108,7 +109,8 @@ export default () => {
    }
 
    render() {
-     const { appearance, data, nodeTheme, nodeTypes, theme } = this.state;
+     const { appearance, nodeTheme, theme } = this.props;
+     const { data, nodeTypes } = this.state;
      return (
        <Component
          appearance={appearance}
@@ -132,13 +134,48 @@ export default () => {
     .addWithJSX("themed", () => (
       <NodeEditor
         appearance={{
-
+          edgeStrokeColor: "#01DAA9",
+          edgeStrokeWidth: 3,
+          gridBackgroundColor: "#2B2A2F",
+          gridType: "line",
         }}
         nodeTheme={{
-
-        }}
-        theme={{
-
+          ...Node.defaultTheme,
+          handle: {
+            display: "inline-block",
+            width: "20px",
+            height: "20px",
+            borderRadius: "50%",
+            background: "#01DAA9",
+            border: "4px solid #2B2A2F",
+            boxSizing: "border-box"
+          },
+          inputHandle: {
+            position: "absolute",
+            left: "-10px",
+            top: "50%",
+            marginTop: "-10px"
+          },
+          outputHandle: {
+            position: "absolute",
+            right: "-10px",
+            top: "50%",
+            marginTop: "-10px"
+          },
+          attribute: {
+            padding: "5px 20px",
+            position: "relative",
+            minWidth: "100px"
+          },
+          singleAttribute: {},
+          node: {
+            display: "inline-block",
+            border: "2px solid #01DAA9",
+            borderRadius: "5px",
+            color: "#fff",
+            background: "#2B2A2F",
+            fontSize: "12px"
+          }
         }} />
     ));
 
