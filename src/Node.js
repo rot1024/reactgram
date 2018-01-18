@@ -116,7 +116,7 @@ export default class Node extends React.PureComponent {
             deltaY,
             lastX,
             lastY
-          }) => onDrag && onDrag({ x, y, deltaX, deltaY, lastX, lastY })
+          }) => onDrag && onDrag(e, { x, y, deltaX, deltaY, lastX, lastY })
         }
         onStop={
           (e, {
@@ -126,7 +126,7 @@ export default class Node extends React.PureComponent {
             deltaY,
             lastX,
             lastY
-          }) => onDragEnd && onDragEnd({ x, y, deltaX, deltaY, lastX, lastY })
+          }) => onDragEnd && onDragEnd(e, { x, y, deltaX, deltaY, lastX, lastY })
         }
         position={position}>
         <div

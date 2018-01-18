@@ -348,7 +348,7 @@ export default class Editor extends React.PureComponent {
               onConnectionStart={(e, d) => this.handleConnectionStart(e, d, n)}
               onConnect={(e, d) => this.handleConnect(d, n)}
               onDrag={
-                ({ x, y }) => onNodeDrag && onNodeDrag({
+                (e, { x, y }) => onNodeDrag && onNodeDrag(e, {
                   node: n,
                   index: i,
                   x,
@@ -356,7 +356,7 @@ export default class Editor extends React.PureComponent {
                 })
               }
               onDragEnd={
-                ({ x, y }) => onNodeDragEnd && onNodeDragEnd({
+                (e, { x, y }) => onNodeDragEnd && onNodeDragEnd(e, {
                   node: n,
                   index: i,
                   x,
