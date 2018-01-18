@@ -7,8 +7,8 @@ export default class AttributeList extends React.PureComponent {
 
   static propTypes = {
     attributes: PropTypes.arrayOf(PropTypes.shape({
-      children: PropTypes.any,
       id: PropTypes.string,
+      children: PropTypes.node,
       input: PropTypes.bool,
       output: PropTypes.bool,
       style: PropTypes.object

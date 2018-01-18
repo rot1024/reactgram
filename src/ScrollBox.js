@@ -14,7 +14,7 @@ export default class ScrollBox extends React.PureComponent {
 
   static propTypes = {
     center: PropTypes.bool,
-    children: PropTypes.any,
+    children: PropTypes.node,
     className: PropTypes.string,
     component: PropTypes.any,
     height: PropTypes.number,

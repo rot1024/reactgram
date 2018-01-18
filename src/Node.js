@@ -2,23 +2,16 @@ import React from "react";
 import PropTypes from "prop-types";
 import Draggable from "react-draggable";
 
+import Attribute from "./Attribute";
 import AttributeList from "./AttributeList";
 
 export default class Node extends React.PureComponent {
 
   static propTypes = {
-    attributes: PropTypes.arrayOf(PropTypes.shape({
-      children: PropTypes.any,
-      id: PropTypes.string,
-      input: PropTypes.bool,
-      inputHandleData: PropTypes.any,
-      output: PropTypes.bool,
-      outputHandleData: PropTypes.any
-    })),
+    attributes: AttributeList.propTypes.attributes,
     className: PropTypes.string,
     defaultPosition: PropTypes.shape({ x: PropTypes.number, y: PropTypes.number }),
     draggable: PropTypes.bool,
-    // icon: PropTypes.any,
     handleRefs: PropTypes.object,
     id: PropTypes.string,
     input: PropTypes.bool,

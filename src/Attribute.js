@@ -62,8 +62,8 @@ const Attribute = ({
 );
 
 Attribute.propTypes = {
-  children: PropTypes.any,
-  component: PropTypes.any,
+  children: PropTypes.node,
+  component: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
   data: PropTypes.any,
   input: PropTypes.bool,
   inputHandleRef: PropTypes.func,
