@@ -7,6 +7,7 @@ const attributePropTypeShape = {
   children: PropTypes.node,
   component: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
   data: PropTypes.any,
+  draggable: PropTypes.bool,
   id: PropTypes.string.isRequired,
   input: PropTypes.bool,
   inputConnected: PropTypes.bool,
@@ -78,6 +79,7 @@ export default class AttributeList extends React.PureComponent {
             component={a.component}
             contentTheme={a.theme}
             data={a.data}
+            draggable={a.draggable}
             input={a.input}
             inputConnected={a.inputConnected}
             inputHandleRef={handleRefs ? e => { this.setHandleRef(a, "input", e); } : undefined}

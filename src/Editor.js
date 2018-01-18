@@ -25,10 +25,13 @@ export default class Editor extends React.PureComponent {
       nodes: PropTypes.array
     }),
     id: PropTypes.string,
-    nodeAttributeChildren: PropTypes.node,
-    nodeAttributeComponent: PropTypes.oneOf([PropTypes.element, PropTypes.func]),
-    nodeAttributeRender: PropTypes.func,
-    nodeAttributeTheme: PropTypes.any,
+    nodeAttribute: PropTypes.shape({
+      children: PropTypes.node,
+      component: PropTypes.oneOf([PropTypes.element, PropTypes.func]),
+      draggable: PropTypes.bool,
+      render: PropTypes.func,
+      theme: PropTypes.any
+    }),
     nodeTypes: PropTypes.object,
     onConnect: PropTypes.func,
     onEdgeClick: PropTypes.func,
@@ -47,6 +50,7 @@ export default class Editor extends React.PureComponent {
       edgeStrokeWidth: 3,
       gridType: "line"
     },
+    nodeAttribute: {},
     workspaceHeight: 2000,
     workspaceWidth: 2000
   }
@@ -215,10 +219,13 @@ export default class Editor extends React.PureComponent {
       className,
       data,
       id,
-      nodeAttributeChildren,
-      nodeAttributeComponent,
-      nodeAttributeRender,
-      nodeAttributeTheme,
+      nodeAttribute: {
+        children: nodeAttributeChildren,
+        component: nodeAttributeComponent,
+        draggable: nodeAttributeDraggable,
+        render: nodeAttributeRender,
+        theme: nodeAttributeTheme
+      },
       nodeTypes,
       onEdgeClick,
       onNodeDrag,
@@ -330,6 +337,7 @@ export default class Editor extends React.PureComponent {
                 children: nodeAttributeChildren,
                 component: nodeAttributeComponent,
                 data: { type: n.type, ...nt.data },
+                draggable: nodeAttributeDraggable,
                 input: nt.input,
                 inputConnected: data.edges && data.edges.some(
                   e => e.to.node === n.id && e.to.attribute === ""

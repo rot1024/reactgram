@@ -28,7 +28,18 @@ export default () => {
            type: "b",
            x: 300,
            y: 200,
-           data: {}
+           data: {
+             outValue: "foo"
+           }
+         },
+         {
+           id: "z",
+           type: "b",
+           x: 0,
+           y: 0,
+           data: {
+             outValue: "hoge"
+           }
          }
        ],
        edges: [
@@ -47,22 +58,47 @@ export default () => {
      nodeTypes: {
        a: {
          data: {
-           titile: "Node A"
+           title: "Node A"
          },
          input: true,
          output: true,
          attributes: [
-           { id: "attr", children: "attr" }
+           {
+             id: "attr",
+             children: "attr"
+           }
          ]
        },
        b: {
          data: {
-           titile: "Node B"
+           title: "Node B"
          },
          input: true,
          output: false,
          attributes: [
-           { id: "out", output: true, children: "out" }
+           {
+             id: "out2",
+             output: true,
+             children: "out2"
+           },
+           {
+             id: "out",
+             output: true,
+             render: ({ data = {} }) => (
+               <input
+                 type="text"
+                 value={data.outValue}
+                 onChange={data.handleOutValueChange}
+                 style={{
+                   border: "1px solid #01DAA9",
+                   borderRadius: "5px",
+                   padding: "6px 15px",
+                   width: "calc(100% - 30px)",
+                   background: "transparent",
+                   color: "#fff"
+                 }} />
+             )
+           }
          ]
        }
      }
@@ -107,13 +143,42 @@ export default () => {
      });
    }
 
+   handleOutValueChange(value, index) {
+     const { data } = this.state;
+     this.setState({
+       data: {
+         ...data,
+         nodes: [
+           ...data.nodes.slice(0, index),
+           ...[{
+             ...data.nodes[index],
+             data: {
+               ...data.nodes[index].data,
+               outValue: value
+             }
+           }],
+           ...data.nodes.slice(index + 1)
+         ]
+       }
+     });
+   }
+
    render() {
      const { appearance, theme } = this.props;
      const { data, nodeTypes } = this.state;
      return (
        <Component
          appearance={appearance}
-         data={data}
+         data={{
+           ...data,
+           nodes: data.nodes.map((n, i) => n.type === "b" ? ({
+             ...n,
+             data: {
+               ...n.data,
+               handleOutValueChange: e => this.handleOutValueChange(e.target.value, i)
+             }
+           }) : n)
+         }}
          nodeTypes={nodeTypes}
          onConnect={this.handleConnect.bind(this)}
          onEdgeClick={(e, d) => console.log("edgeClick", d)}

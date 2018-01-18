@@ -12,6 +12,7 @@ const Attribute = ({
   contentTheme,
   className,
   data,
+  draggable,
   handleClassName,
   input,
   inputConnected,
@@ -32,6 +33,9 @@ const Attribute = ({
   theme = Attribute.defaultTheme
 }) => {
   const t = themeable("attribute", theme, className, style);
+
+  const dr = draggable === true || typeof children === "string";
+  const stopPropagation = dr ? undefined : e => { e.stopPropagation(); };
 
   const sn = [
     "attribute",
@@ -64,11 +68,15 @@ const Attribute = ({
           input
           theme={theme} />
       )}
-      {
-        component ?
-          React.createElement(component, contentProps) : render ?
-            render(contentProps) : children
-      }
+      <div
+        onMouseDown={stopPropagation}
+        onTouchStart={stopPropagation}>
+        {
+          component ?
+            React.createElement(component, contentProps) : render ?
+              render(contentProps) : children
+        }
+      </div>
       {output && (
         <Handle
           handleRef={outputHandleRef}
@@ -91,6 +99,7 @@ Attribute.propTypes = {
   contentStyle: PropTypes.object,
   contentTheme: PropTypes.any,
   data: PropTypes.any,
+  draggable: PropTypes.bool,
   handleClassName: PropTypes.string,
   handleStyle: PropTypes.object,
   input: PropTypes.bool,

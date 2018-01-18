@@ -38,6 +38,7 @@ export default class Node extends React.PureComponent {
   static propTypes = {
     attributes: AttributeList.propTypes.attributes,
     className: PropTypes.string,
+    data: PropTypes.any,
     defaultPosition: PropTypes.shape({ x: PropTypes.number, y: PropTypes.number }),
     draggable: PropTypes.bool,
     handleRefs: PropTypes.object,
@@ -93,6 +94,7 @@ export default class Node extends React.PureComponent {
     const {
       attributes,
       className,
+      data,
       defaultPosition,
       draggable = true,
       handleRefs,
@@ -150,12 +152,13 @@ export default class Node extends React.PureComponent {
                 ...nodeAttribute,
                 id: "",
                 ...dna ? {
-                  component: dna
+                  component: dna,
+                  draggable: true
                 } : {},
                 isNodeAttribute: true,
                 single: !attributes || attributes.length === 0
               },
-              ...attributes || []
+              ...attributes.map(a => ({ ...a, data })) || []
             ]}
             handleRefs={handleRefs}
             onConnectionStart={(e, d) => this.handleConnectionStart(e, d)}
