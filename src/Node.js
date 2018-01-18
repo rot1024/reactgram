@@ -22,10 +22,11 @@ export default class Node extends React.PureComponent {
     handleRefs: PropTypes.object,
     id: PropTypes.string,
     input: PropTypes.bool,
-    onConnect: PropTypes.func,
-    onConnectionStart: PropTypes.func,
+    onConnect: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
+    onConnectionStart: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     onDrag: PropTypes.func,
-    onDragEnd: PropTypes.func,
+    onDragEnd: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
+    onHandleClick: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     output: PropTypes.bool,
     position: PropTypes.shape({ x: PropTypes.number, y: PropTypes.number }),
     style: PropTypes.object,
@@ -38,11 +39,9 @@ export default class Node extends React.PureComponent {
     background: "#fff"
   }
 
-  handleConnectionStart(e, { attribute, index, type }) {
-    e.preventDefault();
-    e.stopPropagation();
-    if (this.props.onConnectionStart) {
-      this.props.onConnectionStart(e, {
+  handleEvent(propName, e, { attribute, index, type }) {
+    if (this.props[propName]) {
+      this.props[propName](e, {
         attribute: index > 0 ? attribute : null,
         index: index - 1,
         type,
@@ -51,17 +50,20 @@ export default class Node extends React.PureComponent {
     }
   }
 
-  handleConnect(e, { attribute, index, type }) {
+  handleConnectionStart(e, ...args) {
     e.preventDefault();
     e.stopPropagation();
-    if (this.props.onConnect) {
-      this.props.onConnect(e, {
-        attribute: index > 0 ? attribute : null,
-        index: index - 1,
-        type,
-        isNodeAttribute: index === 0
-      });
-    }
+    this.handleEvent("onConnectionStart", e, ...args);
+  }
+
+  handleConnect(e, ...args) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.handleEvent("onConnect", e, ...args);
+  }
+
+  handleHandleClick(...args) {
+    this.handleEvent("onHandleClick", ...args);
   }
 
   render() {
@@ -128,7 +130,8 @@ export default class Node extends React.PureComponent {
             ]}
             handleRefs={handleRefs}
             onConnectionStart={(e, d) => this.handleConnectionStart(e, d)}
-            onConnect={(e, d) => this.handleConnect(e, d)} />
+            onConnect={(e, d) => this.handleConnect(e, d)}
+            onHandleClick={(e, d) => this.handleHandleClick(e, d)} />
         </div>
       </Draggable>
     );

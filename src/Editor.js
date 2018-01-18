@@ -14,6 +14,7 @@ export default class Editor extends React.PureComponent {
     id: PropTypes.string,
     nodeTypes: PropTypes.object,
     onConnect: PropTypes.func,
+    onHandleClick: PropTypes.func,
     onNodeDrag: PropTypes.func,
     onNodeDragEnd: PropTypes.func,
     style: PropTypes.object
@@ -128,6 +129,19 @@ export default class Editor extends React.PureComponent {
     }
 
     this.stopDragging();
+  }
+
+  handleHandleClick(e, a, n, i) {
+    if (this.props.onHandleClick) {
+      this.props.onHandleClick(e, {
+        node: n,
+        nodeIndex: i,
+        attribute: a.attribute,
+        attributeIndex: a.index,
+        type: a.type,
+        isNodeAttribute: a.isNodeAttribute
+      });
+    }
   }
 
   getHandleElement(edge) {
@@ -270,6 +284,7 @@ export default class Editor extends React.PureComponent {
                     y
                   })
                 }
+                onHandleClick={(e, a) => this.handleHandleClick(e, a, n, i)}
                 position={{ x: n.x, y: n.y }} />
             );
           })}

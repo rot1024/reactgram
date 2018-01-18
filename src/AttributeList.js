@@ -14,20 +14,27 @@ export default class AttributeList extends React.PureComponent {
       style: PropTypes.object
     })),
     handleRefs: PropTypes.instanceOf(Map),
-    onConnect: PropTypes.func,
-    onConnectionStart: PropTypes.func,
+    onConnect: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
+    onConnectionStart: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
+    onHandleClick: PropTypes.func // eslint-disable-line react/no-unused-prop-types
   }
 
-  handleConnectionStart(e, { a, i, type }) {
-    if (this.props.onConnectionStart) {
-      this.props.onConnectionStart(e, { attribute: a, index: i, type });
+  handleEvent(propName, e, { a, i, type }) {
+    if (this.props[propName]) {
+      this.props[propName](e, { attribute: a, index: i, type });
     }
   }
 
-  handleConnect(e, { a, i, type }) {
-    if (this.props.onConnect) {
-      this.props.onConnect(e, { attribute: a, index: i, type });
-    }
+  handleConnectionStart(...args) {
+    this.handleEvent("onConnectionStart", ...args);
+  }
+
+  handleConnect(...args) {
+    this.handleEvent("onConnect", ...args);
+  }
+
+  handleClick(...args) {
+    this.handleEvent("onHandleClick", ...args);
   }
 
   setHandleRef(a, type, e) {
@@ -55,8 +62,10 @@ export default class AttributeList extends React.PureComponent {
             data={a.data}
             input={a.input}
             inputHandleRef={handleRefs ? e => { this.setHandleRef(a, "input", e); } : undefined}
+            onInputClick={e => this.handleClick(e, { type: "input", a, i })}
             onInputConnectionStart={e => this.handleConnectionStart(e, { type: "input", a, i })}
             onInputConnect={e => this.handleConnect(e, { type: "input", a, i })}
+            onOutputClick={e => this.handleClick(e, { type: "output", a, i })}
             onOutputConnectionStart={e => this.handleConnectionStart(e, { type: "output", a, i })}
             onOutputConnect={e => this.handleConnect(e, { type: "output", a, i })}
             output={a.output}

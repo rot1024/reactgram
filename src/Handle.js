@@ -6,6 +6,7 @@ const Handle = ({
   className,
   handleRef,
   id,
+  onClick,
   onConnect,
   onConnectionStart,
   style,
@@ -30,6 +31,7 @@ const Handle = ({
         ...Handle.defaultStyle,
         ...style
       }}
+      onClick={onClick}
       onMouseDown={startConnect}
       onTouchStart={startConnect}
       onMouseUp={endConnect}
@@ -45,6 +47,7 @@ Handle.propTypes = {
   className: PropTypes.string,
   handleRef: PropTypes.func,
   id: PropTypes.string,
+  onClick: PropTypes.func,
   onConnect: PropTypes.func,
   onConnectionStart: PropTypes.func,
   style: PropTypes.object

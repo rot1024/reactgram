@@ -9,8 +9,10 @@ const Attribute = ({
   data,
   input,
   inputHandleRef,
+  onInputClick,
   onInputConnect,
   onInputConnectionStart,
+  onOutputClick,
   onOutputConnect,
   onOutputConnectionStart,
   output,
@@ -27,6 +29,7 @@ const Attribute = ({
     {input && (
       <Handle
         handleRef={inputHandleRef}
+        onClick={onInputClick}
         onConnect={onInputConnect}
         onConnectionStart={onInputConnectionStart}
         style={{
@@ -45,6 +48,7 @@ const Attribute = ({
     {output && (
       <Handle
         handleRef={outputHandleRef}
+        onClick={onOutputClick}
         onConnect={onOutputConnect}
         onConnectionStart={onOutputConnectionStart}
         style={{
@@ -63,8 +67,10 @@ Attribute.propTypes = {
   data: PropTypes.any,
   input: PropTypes.bool,
   inputHandleRef: PropTypes.func,
+  onInputClick: PropTypes.func,
   onInputConnect: PropTypes.func,
   onInputConnectionStart: PropTypes.func,
+  onOutputClick: PropTypes.func,
   onOutputConnect: PropTypes.func,
   onOutputConnectionStart: PropTypes.func,
   output: PropTypes.bool,
