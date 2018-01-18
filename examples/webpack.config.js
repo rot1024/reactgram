@@ -4,7 +4,6 @@ const path = require("path");
 
 const webpack = require("webpack");
 const HtmlPlugin = require("html-webpack-plugin");
-const CopyPlugin = require("copy-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
