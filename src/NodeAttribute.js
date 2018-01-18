@@ -40,12 +40,11 @@ NodeAttribute.defaultTheme = {
     alignItems: "center"
   },
   nodeAttributeContentImage: {
-    margin: "4px",
     width: "16px",
-    height: "16px"
+    height: "16px",
+    marginRight: "10px"
   },
   nodeAttributeContentTitle: {
-    padding: "4px",
     flex: "auto"
   }
 };

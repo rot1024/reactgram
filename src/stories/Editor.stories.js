@@ -164,7 +164,7 @@ export default () => {
             border: "4px solid #2B2A2F"
           },
           attribute: {
-            padding: "5px 20px",
+            padding: "10px 20px",
             position: "relative",
             minWidth: "100px"
           },

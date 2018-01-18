@@ -114,7 +114,7 @@ Attribute.propTypes = {
 
 Attribute.defaultTheme = {
   attribute: {
-    padding: "5px 15px",
+    padding: "10px 20px",
     position: "relative"
   },
   plainAttribute: {},
