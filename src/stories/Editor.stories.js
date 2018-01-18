@@ -11,7 +11,6 @@ export default () => {
 
     static propTypes = {
       appearance: Component.propTypes.appearance,
-      nodeTheme: PropTypes.any,
       theme: PropTypes.any
     }
 
@@ -109,13 +108,12 @@ export default () => {
    }
 
    render() {
-     const { appearance, nodeTheme, theme } = this.props;
+     const { appearance, theme } = this.props;
      const { data, nodeTypes } = this.state;
      return (
        <Component
          appearance={appearance}
          data={data}
-         nodeTheme={nodeTheme}
          nodeTypes={nodeTypes}
          onConnect={this.handleConnect.bind(this)}
          onEdgeClick={(e, d) => console.log("edgeClick", d)}
@@ -139,7 +137,7 @@ export default () => {
           gridBackgroundColor: "#2B2A2F",
           gridType: "line",
         }}
-        nodeTheme={{
+        theme={{
           ...Node.defaultTheme,
           handle: {
             display: "inline-block",

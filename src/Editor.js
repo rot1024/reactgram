@@ -26,7 +26,6 @@ export default class Editor extends React.PureComponent {
     nodeAttributeComponent: PropTypes.oneOf([PropTypes.element, PropTypes.func]),
     nodeAttributeContentTheme: PropTypes.any,
     nodeAttributeRender: PropTypes.func,
-    nodeTheme: PropTypes.any,
     nodeTypes: PropTypes.object,
     onConnect: PropTypes.func,
     onEdgeClick: PropTypes.func,
@@ -45,7 +44,6 @@ export default class Editor extends React.PureComponent {
       edgeStrokeWidth: 3,
       gridType: "line"
     },
-    theme: {},
     workspaceHeight: 2000,
     workspaceWidth: 2000
   }
@@ -219,7 +217,6 @@ export default class Editor extends React.PureComponent {
       nodeAttributeComponent,
       nodeAttributeContentTheme,
       nodeAttributeRender,
-      nodeTheme,
       nodeTypes,
       onEdgeClick,
       onNodeDrag,
@@ -351,7 +348,7 @@ export default class Editor extends React.PureComponent {
                 }
                 onHandleClick={(e, a) => this.handleHandleClick(e, a, n, i)}
                 position={{ x: n.x, y: n.y }}
-                theme={nodeTheme} />
+                theme={theme} />
             );
           })}
           {ce && (
