@@ -58,13 +58,7 @@ const Attribute = ({
           onClick={onInputClick}
           onConnect={onInputConnect}
           onConnectionStart={onInputConnectionStart}
-          style={{
-            position: "absolute",
-            left: "-9px",
-            top: "50%",
-            marginTop: "-8px",
-            ...handleStyle
-          }}
+          input
           theme={handleTheme} />
       )}
       {
@@ -78,12 +72,7 @@ const Attribute = ({
           onClick={onOutputClick}
           onConnect={onOutputConnect}
           onConnectionStart={onOutputConnectionStart}
-          style={{
-            position: "absolute",
-            right: "-9px",
-            top: "50%",
-            marginTop: "-8px"
-          }}
+          output
           theme={handleTheme} />
       )}
     </div>
@@ -119,7 +108,7 @@ Attribute.propTypes = {
 
 Attribute.defaultTheme = {
   attribute: {
-    padding: "5px 15px 5px",
+    padding: "5px 15px",
     position: "relative"
   },
   plainAttribute: {},

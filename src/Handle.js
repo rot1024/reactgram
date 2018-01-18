@@ -7,9 +7,11 @@ const Handle = ({
   children,
   className,
   handleRef,
+  input,
   onClick,
   onConnect,
   onConnectionStart,
+  output,
   style,
   theme = Handle.defaultTheme
 }) => {
@@ -35,7 +37,11 @@ const Handle = ({
       onMouseUp={endConnect}
       onTouchEnd={endConnect}
       ref={handleRef}
-      {...t("handle")}>
+      {...t(
+        "handle",
+        ...input ? ["inputHandle"] : [],
+        ...output ? ["outputHandle"] : []
+      )}>
       {children}
     </div>
   );
@@ -45,9 +51,11 @@ Handle.propTypes = {
   children: PropTypes.node,
   className: PropTypes.string,
   handleRef: PropTypes.func,
+  input: PropTypes.bool,
   onClick: PropTypes.func,
   onConnect: PropTypes.func,
   onConnectionStart: PropTypes.func,
+  output: PropTypes.bool,
   style: PropTypes.object,
   theme: PropTypes.any
 };
@@ -60,6 +68,18 @@ Handle.defaultTheme = {
     borderRadius: "50%",
     border: "1px solid #000",
     background: "#fff"
+  },
+  inputHandle: {
+    position: "absolute",
+    left: "-9px",
+    top: "50%",
+    marginTop: "-8px"
+  },
+  outputHandle: {
+    position: "absolute",
+    right: "-9px",
+    top: "50%",
+    marginTop: "-8px"
   }
 };
 
