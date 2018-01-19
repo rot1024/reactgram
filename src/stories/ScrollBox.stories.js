@@ -19,6 +19,20 @@ export default () => {
             gridType="line"
             {...props} />
         )} />
+    ))
+    .add("ScrollPos", () => (
+      <Component
+        width={2000}
+        height={2000}
+        scrollX={1000}
+        scrollY={500}
+        onScroll={(e, d) => console.log("onScroll", d)}
+        render={props => (
+          <Grid
+            backgroundColor="#434343"
+            gridType="dot"
+            {...props} />
+        )} />
     ));
 
 };

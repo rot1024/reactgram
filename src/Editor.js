@@ -38,10 +38,14 @@ export default class Editor extends React.PureComponent {
     onHandleClick: PropTypes.func,
     onNodeDrag: PropTypes.func,
     onNodeDragEnd: PropTypes.func,
+    onWorkspaceScroll: PropTypes.func,
     style: PropTypes.object,
     theme: PropTypes.any,
+    workspaceCenter: PropTypes.bool,
     workspaceHeight: PropTypes.number,
-    workspaceWidth: PropTypes.number
+    workspaceScrollX: PropTypes.number,
+    workspaceScrollY: PropTypes.number,
+    workspaceWidth: PropTypes.number,
   }
 
   static defaultProps = {
@@ -230,10 +234,14 @@ export default class Editor extends React.PureComponent {
       onEdgeClick,
       onNodeDrag,
       onNodeDragEnd,
+      onWorkspaceScroll,
       style,
       theme,
+      workspaceCenter,
       workspaceHeight,
-      workspaceWidth
+      workspaceWidth,
+      workspaceScrollX,
+      workspaceScrollY
     } = this.props;
 
     const {
@@ -249,15 +257,16 @@ export default class Editor extends React.PureComponent {
 
     return (
       <ScrollBox
+        center={workspaceCenter}
         width={workspaceWidth}
         height={workspaceHeight}
-        scrollRef={e => { this.scrollElement = e; }}
         id={id}
         onMouseMove={e => this.handleMouseMove(e)}
         onTouchMove={e => this.handleMouseMove(e)}
         onMouseUp={this.stopDragging} // eslint-disable-line react/jsx-handler-names
         onTouchEnd={this.stopDragging} // eslint-disable-line react/jsx-handler-names
         onTouchCancel={this.stopDragging} // eslint-disable-line react/jsx-handler-names
+        onScroll={onWorkspaceScroll}
         render={({ style: s, ...props }) => (
           <Grid
             backgroundColor={gridBackgroundColor}
@@ -271,6 +280,9 @@ export default class Editor extends React.PureComponent {
               style: s
             })} />
         )}
+        scrollRef={e => { this.scrollElement = e; }}
+        scrollX={workspaceScrollX}
+        scrollY={workspaceScrollY}
         theme={theme}>
         {data && data.edges && data.edges.map((e, i) => {
 

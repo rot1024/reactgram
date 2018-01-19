@@ -21,35 +21,72 @@ export default class ScrollBox extends React.PureComponent {
     component: PropTypes.any,
     height: PropTypes.number,
     id: PropTypes.string,
-    initialX: PropTypes.number,
-    initialY: PropTypes.number,
     onScroll: PropTypes.func,
     render: PropTypes.func,
     scrollRef: PropTypes.func,
+    scrollX: PropTypes.number,
+    scrollY: PropTypes.number,
     style: PropTypes.object,
     theme: PropTypes.any,
     width: PropTypes.number
   }
 
-  componentDidMount() {
-    if (this.props.initialX) {
-      this.scrollElement.scrollLeft = this.props.initialX;
-    }
-    if (this.props.initialY) {
-      this.scrollElement.scrollTop = this.props.initialY;
+  componentWillMount() {
+    if (typeof this.props.scrollX === "number" || typeof this.props.scrollY === "number") {
+      this.updateScrollPos = true;
     }
     if (this.props.center) {
+      this.updateScrollCenter = true;
+    }
+  }
+
+  componentDidMount() {
+    this.updateScroll();
+  }
+
+  componentWillReceiveProps(prev) {
+    if (
+      (typeof this.props.scrollX === "number" || typeof this.props.scrollY === "number") &&
+      (prev.scrollX !== this.props.scrollX || prev.scrollY !== this.props.scrollY)
+    ) {
+      this.updateScrollPos = true;
+    }
+    if (this.props.center && !prev.center) {
+      this.updateScrollCenter = true;
+    }
+  }
+
+  componentDidUpdate() {
+    this.updateScroll();
+  }
+
+  updateScroll() {
+    if (!this.updateScrollCenter) {
+      if (this.updateScrollPos) {
+        this.scroll(
+          null,
+          typeof this.props.scrollX === "number" ? this.props.scrollX : NaN,
+          typeof this.props.scrollY === "number" ? this.props.scrollY : NaN
+        );
+      }
+    } else {
       this.scrollToCenter();
     }
+    this.updateScrollPos = false;
+    this.updateScrollCenter = false;
   }
 
   scroll(e, x, y) {
     if (!this.scrollElement) return;
     const lastX = this.scrollElement.scrollLeft;
     const lastY = this.scrollElement.scrollTop;
-    this.scrollElement.scrollLeft = x;
-    this.scrollElement.scrollTop = y;
-    if (this.props.onScroll) {
+    if (!isNaN(x)) {
+      this.scrollElement.scrollLeft = x;
+    }
+    if (!isNaN(y)) {
+      this.scrollElement.scrollTop = y;
+    }
+    if (this.props.onScroll && (!isNaN(x) || !isNaN(y))) {
       const deltaX = x - lastX;
       const deltaY = y - lastY;
       this.props.onScroll(e, { x, y, deltaX, deltaY, lastX, lastY });
@@ -81,13 +118,20 @@ export default class ScrollBox extends React.PureComponent {
 
   values = null
 
+  updateScrollPos = false
+
+  updateScrollCenter = false
+
   render() {
     const {
+      center, // eslint-disable-line no-unused-vars
       children,
       className,
       component,
       id,
       scrollRef,
+      scrollX, // eslint-disable-line no-unused-vars
+      scrollY, // eslint-disable-line no-unused-vars
       style,
       theme,
       width,
