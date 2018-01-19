@@ -309,33 +309,66 @@ function (_React$PureComponent) {
       args[_key] = arguments[_key];
     }
 
-    return (_temp = _this = _React$PureComponent.call.apply(_React$PureComponent, [this].concat(args)) || this, _this.scrollElement = null, _this.workspaceElement = null, _this.trackPointer = null, _this.values = null, _temp) || _assertThisInitialized(_this);
+    return (_temp = _this = _React$PureComponent.call.apply(_React$PureComponent, [this].concat(args)) || this, _this.scrollElement = null, _this.workspaceElement = null, _this.trackPointer = null, _this.values = null, _this.updateScrollPos = false, _this.updateScrollCenter = false, _temp) || _assertThisInitialized(_this);
   }
 
   var _proto = ScrollBox.prototype;
 
-  _proto.componentDidMount = function componentDidMount() {
-    if (this.props.initialX) {
-      this.scrollElement.scrollLeft = this.props.initialX;
-    }
-
-    if (this.props.initialY) {
-      this.scrollElement.scrollTop = this.props.initialY;
+  _proto.componentWillMount = function componentWillMount() {
+    if (typeof this.props.scrollX === "number" || typeof this.props.scrollY === "number") {
+      this.updateScrollPos = true;
     }
 
     if (this.props.center) {
+      this.updateScrollCenter = true;
+    }
+  };
+
+  _proto.componentDidMount = function componentDidMount() {
+    this.updateScroll();
+  };
+
+  _proto.componentWillReceiveProps = function componentWillReceiveProps(prev) {
+    if ((typeof this.props.scrollX === "number" || typeof this.props.scrollY === "number") && (prev.scrollX !== this.props.scrollX || prev.scrollY !== this.props.scrollY)) {
+      this.updateScrollPos = true;
+    }
+
+    if (this.props.center && !prev.center) {
+      this.updateScrollCenter = true;
+    }
+  };
+
+  _proto.componentDidUpdate = function componentDidUpdate() {
+    this.updateScroll();
+  };
+
+  _proto.updateScroll = function updateScroll() {
+    if (!this.updateScrollCenter) {
+      if (this.updateScrollPos) {
+        this.scroll(null, typeof this.props.scrollX === "number" ? this.props.scrollX : NaN, typeof this.props.scrollY === "number" ? this.props.scrollY : NaN);
+      }
+    } else {
       this.scrollToCenter();
     }
+
+    this.updateScrollPos = false;
+    this.updateScrollCenter = false;
   };
 
   _proto.scroll = function scroll(e, x, y) {
     if (!this.scrollElement) return;
     var lastX = this.scrollElement.scrollLeft;
     var lastY = this.scrollElement.scrollTop;
-    this.scrollElement.scrollLeft = x;
-    this.scrollElement.scrollTop = y;
 
-    if (this.props.onScroll) {
+    if (!isNaN(x)) {
+      this.scrollElement.scrollLeft = x;
+    }
+
+    if (!isNaN(y)) {
+      this.scrollElement.scrollTop = y;
+    }
+
+    if (this.props.onScroll && (!isNaN(x) || !isNaN(y))) {
       var deltaX = x - lastX;
       var deltaY = y - lastY;
       this.props.onScroll(e, {
@@ -364,17 +397,20 @@ function (_React$PureComponent) {
     var _this2 = this;
 
     var _props2 = this.props,
+        center = _props2.center,
         children = _props2.children,
         className = _props2.className,
         component = _props2.component,
         id = _props2.id,
         scrollRef = _props2.scrollRef,
+        scrollX = _props2.scrollX,
+        scrollY = _props2.scrollY,
         style = _props2.style,
         theme = _props2.theme,
         width = _props2.width,
         height = _props2.height,
         render = _props2.render,
-        props = _objectWithoutProperties(_props2, ["children", "className", "component", "id", "scrollRef", "style", "theme", "width", "height", "render"]);
+        props = _objectWithoutProperties(_props2, ["center", "children", "className", "component", "id", "scrollRef", "scrollX", "scrollY", "style", "theme", "width", "height", "render"]);
     var sty = {
       width: width + "px",
       height: height + "px"
@@ -424,11 +460,11 @@ ScrollBox.propTypes = {
   component: PropTypes.any,
   height: PropTypes.number,
   id: PropTypes.string,
-  initialX: PropTypes.number,
-  initialY: PropTypes.number,
   onScroll: PropTypes.func,
   render: PropTypes.func,
   scrollRef: PropTypes.func,
+  scrollX: PropTypes.number,
+  scrollY: PropTypes.number,
   style: PropTypes.object,
   theme: PropTypes.any,
   width: PropTypes.number
@@ -20326,22 +20362,25 @@ function (_React$PureComponent) {
         nodeAttributeTheme = _props$nodeAttribute.theme,
         nodeTypes = _props.nodeTypes,
         onEdgeClick = _props.onEdgeClick,
+        onNodeData = _props.onNodeData,
         onNodeDrag = _props.onNodeDrag,
         onNodeDragEnd = _props.onNodeDragEnd,
+        onWorkspaceScroll = _props.onWorkspaceScroll,
         style = _props.style,
         theme = _props.theme,
+        workspaceCenter = _props.workspaceCenter,
         workspaceHeight = _props.workspaceHeight,
-        workspaceWidth = _props.workspaceWidth;
+        workspaceWidth = _props.workspaceWidth,
+        workspaceScrollX = _props.workspaceScrollX,
+        workspaceScrollY = _props.workspaceScrollY;
     var ce = this.state.connectingEdge;
     var t = enhancedThemeable("editor", theme, className, style);
     var workspaceRect = this.workspaceElement ? this.workspaceElement.getBoundingClientRect() : null;
     var edgePathTheme = t("edgePath");
     return React.createElement(ScrollBox, {
+      center: workspaceCenter,
       width: workspaceWidth,
       height: workspaceHeight,
-      scrollRef: function scrollRef(e) {
-        _this2.scrollElement = e;
-      },
       id: id,
       onMouseMove: function onMouseMove(e) {
         return _this2.handleMouseMove(e);
@@ -20355,6 +20394,7 @@ function (_React$PureComponent) {
       ,
       onTouchCancel: this.stopDragging // eslint-disable-line react/jsx-handler-names
       ,
+      onScroll: onWorkspaceScroll,
       render: function render(_ref3) {
         var s = _ref3.style,
             props = _objectWithoutProperties(_ref3, ["style"]);
@@ -20371,6 +20411,11 @@ function (_React$PureComponent) {
           style: s
         })));
       },
+      scrollRef: function scrollRef(e) {
+        _this2.scrollElement = e;
+      },
+      scrollX: workspaceScrollX,
+      scrollY: workspaceScrollY,
       theme: theme
     }, data && data.edges && data.edges.map(function (e, i) {
       var elem = _this2.getHandleElement(e);
@@ -20414,6 +20459,11 @@ function (_React$PureComponent) {
         _this2.handleRefs.set(n.id, new Map());
       }
 
+      var nodeData = onNodeData ? onNodeData({
+        node: n,
+        nodeIndex: i,
+        nodeType: nt
+      }) : {};
       return React.createElement(Node, {
         attributes: nt.attributes.map(function (a) {
           return _extends({}, a, {
@@ -20426,7 +20476,7 @@ function (_React$PureComponent) {
           });
         }),
         key: n.id,
-        data: n.data // eslint-disable-next-line react/jsx-handler-names
+        data: _extends({}, n.data, nodeData) // eslint-disable-next-line react/jsx-handler-names
         ,
         handleRefs: _this2.handleRefs.get(n.id),
         nodeAttribute: {
@@ -20533,11 +20583,16 @@ Editor.propTypes = {
   onConnect: PropTypes.func,
   onEdgeClick: PropTypes.func,
   onHandleClick: PropTypes.func,
+  onNodeData: PropTypes.func,
   onNodeDrag: PropTypes.func,
   onNodeDragEnd: PropTypes.func,
+  onWorkspaceScroll: PropTypes.func,
   style: PropTypes.object,
   theme: PropTypes.any,
+  workspaceCenter: PropTypes.bool,
   workspaceHeight: PropTypes.number,
+  workspaceScrollX: PropTypes.number,
+  workspaceScrollY: PropTypes.number,
   workspaceWidth: PropTypes.number
 };
 Editor.defaultProps = {
