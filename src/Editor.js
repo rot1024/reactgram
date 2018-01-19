@@ -36,6 +36,7 @@ export default class Editor extends React.PureComponent {
     onConnect: PropTypes.func,
     onEdgeClick: PropTypes.func,
     onHandleClick: PropTypes.func,
+    onNodeData: PropTypes.func,
     onNodeDrag: PropTypes.func,
     onNodeDragEnd: PropTypes.func,
     onWorkspaceScroll: PropTypes.func,
@@ -232,6 +233,7 @@ export default class Editor extends React.PureComponent {
       },
       nodeTypes,
       onEdgeClick,
+      onNodeData,
       onNodeDrag,
       onNodeDragEnd,
       onWorkspaceScroll,
@@ -330,6 +332,9 @@ export default class Editor extends React.PureComponent {
             this.handleRefs.set(n.id, new Map());
           }
 
+          const nodeData = onNodeData ?
+            onNodeData({ node: n, nodeIndex: i, nodeType: nt }) : {};
+
           return (
             <Node
               attributes={nt.attributes.map(a => ({
@@ -342,7 +347,10 @@ export default class Editor extends React.PureComponent {
                 )
               }))}
               key={n.id}
-              data={n.data}
+              data={{
+                ...n.data,
+                ...nodeData
+              }}
               // eslint-disable-next-line react/jsx-handler-names
               handleRefs={this.handleRefs.get(n.id)}
               nodeAttribute={{

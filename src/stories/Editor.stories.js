@@ -169,19 +169,13 @@ export default () => {
      return (
        <Component
          appearance={appearance}
-         data={{
-           ...data,
-           nodes: data.nodes.map((n, i) => n.type === "b" ? ({
-             ...n,
-             data: {
-               ...n.data,
-               handleOutValueChange: e => this.handleOutValueChange(e.target.value, i)
-             }
-           }) : n)
-         }}
+         data={data}
          nodeTypes={nodeTypes}
          onConnect={this.handleConnect.bind(this)}
          onEdgeClick={(e, d) => console.log("edgeClick", d)}
+         onNodeData={({ nodeIndex: i }) => ({
+           handleOutValueChange: e => this.handleOutValueChange(e.target.value, i)
+         })}
          onNodeDrag={(e, a) => this.handleNodeMove(a)}
          onHandleClick={(e, d) => console.log("handleClick", d)}
          theme={theme} />
