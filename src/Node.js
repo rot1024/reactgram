@@ -163,7 +163,7 @@ export default class Node extends React.PureComponent {
           })}>
           <AttributeList
             attributes={[
-              {
+              ...nodeAttribute ? [{
                 ...nodeAttribute,
                 data,
                 id: "",
@@ -173,7 +173,7 @@ export default class Node extends React.PureComponent {
                 } : {},
                 isNodeAttribute: true,
                 single: !attributes || attributes.length === 0
-              },
+              }] : [],
               ...attributes.map(a => ({ ...a, data })) || []
             ]}
             handleRefs={handleRefs}
