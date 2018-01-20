@@ -229,7 +229,7 @@ export default class Editor extends React.PureComponent {
     const fh = fa.get(edge.from.attribute);
     const th = ta.get(edge.to.attribute);
 
-    if (!fh || !th) return null;
+    if (!fh || !th || !fh.output || !th.input) return null;
 
     return {
       from: fh.output,
