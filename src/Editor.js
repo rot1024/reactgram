@@ -107,12 +107,24 @@ export default class Editor extends React.PureComponent {
 
   handleMouseMove(e) {
     if (this.state.connectingEdge) {
+      this.setState({
+        connectingEdge: {
+          ...this.state.connectingEdge,
+          x2: e.clientX + this.scrollElement.scrollLeft - this.workspaceElement.offsetLeft,
+          y2: e.clientY + this.scrollElement.scrollTop - this.workspaceElement.offsetTop
+        }
+      });
+    }
+  }
+
+  handleTouchMove(e) {
+    if (this.state.connectingEdge) {
       const ev = e.changedTouches && e.changedTouches[0] || e;
       this.setState({
         connectingEdge: {
           ...this.state.connectingEdge,
-          x2: ev.clientX + this.scrollElement.scrollLeft,
-          y2: ev.clientY + this.scrollElement.scrollTop
+          x2: ev.clientX + this.scrollElement.scrollLeft - this.workspaceElement.offsetLeft,
+          y2: ev.clientY + this.scrollElement.scrollTop - this.workspaceElement.offsetTop
         }
       });
     }
@@ -339,7 +351,7 @@ export default class Editor extends React.PureComponent {
         height={workspaceHeight}
         id={id}
         onMouseMove={e => this.handleMouseMove(e)}
-        onTouchMove={e => this.handleMouseMove(e)}
+        onTouchMove={e => this.handleTouchMove(e)}
         onMouseUp={this.stopDragging} // eslint-disable-line react/jsx-handler-names
         onTouchEnd={this.stopDragging} // eslint-disable-line react/jsx-handler-names
         onTouchCancel={this.stopDragging} // eslint-disable-line react/jsx-handler-names
