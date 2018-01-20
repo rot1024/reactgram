@@ -58,7 +58,7 @@ export default () => {
      nodeTypes: {
        a: {
          data: {
-           title: "Node A"
+           nodeTitle: "Node A"
          },
          input: true,
          output: true,
@@ -71,7 +71,7 @@ export default () => {
        },
        b: {
          data: {
-           title: "Node B"
+           nodeTitle: "Node B"
          },
          input: true,
          output: false,
@@ -183,7 +183,8 @@ export default () => {
          nodeSelectable
          nodeTypes={nodeTypes}
          onConnect={this.handleConnect.bind(this)}
-         onNodeData={({ nodeIndex: i }) => ({
+         onNodeData={({ nodeIndex: i, nodeType }) => ({
+           ...nodeType.data,
            handleOutValueChange: e => this.handleOutValueChange(e.target.value, i)
          })}
          onNodeDrag={(e, a) => this.handleNodeMove(a)}

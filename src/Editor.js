@@ -364,8 +364,10 @@ export default class Editor extends React.PureComponent {
             this.handleRefs.set(n.id, new Map());
           }
 
-          const nodeData = onNodeData ?
-            onNodeData({ node: n, nodeIndex: i, nodeType: nt }) : {};
+          const nodeData = {
+            ...n.data,
+            ...onNodeData ? onNodeData({ node: n, nodeIndex: i, nodeType: nt }) : {}
+          };
 
           return (
             <Node
@@ -379,16 +381,13 @@ export default class Editor extends React.PureComponent {
                 )
               }))}
               key={n.id}
-              data={{
-                ...n.data,
-                ...nodeData
-              }}
+              data={nodeData}
               // eslint-disable-next-line react/jsx-handler-names
               handleRefs={this.handleRefs.get(n.id)}
               nodeAttribute={{
                 children: nodeAttributeChildren,
                 component: nodeAttributeComponent,
-                data: { type: n.type, ...nt.data },
+                data: nodeData,
                 draggable: nodeAttributeDraggable,
                 input: nt.input,
                 inputConnected: data.edges && data.edges.some(
