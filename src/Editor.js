@@ -107,8 +107,7 @@ export default class Editor extends React.PureComponent {
 
   handleMouseMove(e) {
     if (this.state.connectingEdge) {
-      const ev = e.targetTouches ? e.targetTouches[0] : e;
-      if (!ev) return;
+      const ev = e.changedTouches && e.changedTouches[0] || e;
       this.setState({
         connectingEdge: {
           ...this.state.connectingEdge,
