@@ -248,10 +248,10 @@ var themeable = unwrapExports(dist);
 
 var enhancedThemeable = function enhancedThemeable(defaultStyleName, theme, className, style) {
   var t = themeable(theme || {});
-  var key = 1;
-  return function () {
-    for (var _len = arguments.length, sn = new Array(_len), _key = 0; _key < _len; _key++) {
-      sn[_key] = arguments[_key];
+  var defkey = 1;
+  return function (key) {
+    for (var _len = arguments.length, sn = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      sn[_key - 1] = arguments[_key];
     }
 
     var styleNames = sn;
@@ -264,7 +264,8 @@ var enhancedThemeable = function enhancedThemeable(defaultStyleName, theme, clas
       moreStyle = sn[0].style;
     }
 
-    var props = t.apply(void 0, [key++].concat(styleNames));
+    var k = typeof key === "string" || typeof key === "number" ? key : String(defkey++);
+    var props = t.apply(void 0, [k].concat(styleNames));
 
     if (className) {
       if (props.className) {
@@ -450,7 +451,7 @@ function (_React$PureComponent) {
           scrollRef(e);
         }
       }
-    }, t({
+    }, t(null, {
       styleNames: ["scrollBox"],
       style: workspaceStyle
     }), props), C);
@@ -480,8 +481,7 @@ var Edge = function Edge(_ref) {
   var className = _ref.className,
       debug = _ref.debug,
       id = _ref.id,
-      _ref$strokeColor = _ref.strokeColor,
-      strokeColor = _ref$strokeColor === void 0 ? "#000" : _ref$strokeColor,
+      strokeColor = _ref.strokeColor,
       _ref$strokeWidth = _ref.strokeWidth,
       strokeWidth = _ref$strokeWidth === void 0 ? 1 : _ref$strokeWidth,
       x = _ref.x,
@@ -490,10 +490,15 @@ var Edge = function Edge(_ref) {
       y = _ref.y,
       y1 = _ref.y1,
       y2 = _ref.y2,
+      selected = _ref.selected,
       _ref$shadowRadius = _ref.shadowRadius,
       shadowRadius = _ref$shadowRadius === void 0 ? 0 : _ref$shadowRadius,
       style = _ref.style,
-      svgPathProps = _ref.svgPathProps;
+      _ref$svgPathProps = _ref.svgPathProps,
+      svgPathProps = _ref$svgPathProps === void 0 ? {} : _ref$svgPathProps,
+      _ref$theme = _ref.theme,
+      theme = _ref$theme === void 0 ? Edge.defaultTheme : _ref$theme,
+      themePrefix = _ref.themePrefix;
   var isAbsolute = typeof x === "number" && typeof y === "number";
   var w = Math.abs(x1 - x2);
   var h = Math.abs(y1 - y2);
@@ -501,11 +506,20 @@ var Edge = function Edge(_ref) {
   var by = Math.min(y1, y2);
   var d = strokeWidth;
   var ax = w / 2 + d;
-  return React.createElement("svg", {
+  var t = enhancedThemeable("edge", theme, className, style);
+  var svgStyle = svgPathProps.style,
+      svgClassName = svgPathProps.className,
+      svgProps = _objectWithoutProperties(svgPathProps, ["style", "className"]);
+  var themePrefix2 = themePrefix ? "" + themePrefix[0].toUpperCase() + themePrefix.slice(1) : null;
+  return React.createElement("svg", _extends({
     className: className,
     id: id,
     width: w + d * 2,
     height: h + d * 2,
+    viewBox: "0 0 " + (w + d * 2) + " " + (h + d * 2),
+    xmlns: "http://www.w3.org/2000/svg"
+  }, t(null, {
+    styleNames: ["edge"].concat(themePrefix ? [themePrefix + "Edge"] : [], selected ? ["selectedEdge"] : [""], selected && themePrefix2 ? ["selected" + themePrefix2 + "Edge"] : [""]),
     style: _extends({
       display: "inline-block",
       overflow: "visible"
@@ -518,10 +532,8 @@ var Edge = function Edge(_ref) {
       transform: "translate(" + (x - d) + "px, " + (y - d) + "px)"
     } : {
       transform: "translate(" + -d + "px, -" + -d + "px)"
-    }, style),
-    viewBox: "0 0 " + (w + d * 2) + " " + (h + d * 2),
-    xmlns: "http://www.w3.org/2000/svg"
-  }, shadowRadius > 0 && React.createElement("defs", null, React.createElement("filter", {
+    })
+  })), shadowRadius > 0 && React.createElement("defs", null, React.createElement("filter", {
     id: "shadow",
     filterUnits: "userSpaceOnUse",
     colorInterpolationFilters: "sRGB"
@@ -547,10 +559,13 @@ var Edge = function Edge(_ref) {
     fill: "none",
     stroke: strokeColor,
     strokeWidth: strokeWidth,
-    strokeLinecap: "round",
     filter: shadowRadius > 0 ? "url(#shadow)" : undefined,
     d: "M" + (x1 - bx + d) + " " + (y1 - by + d) + " C" + ax + " " + (y1 - by + d) + "," + ax + " " + (y2 - by + d) + "," + (x2 - bx + d) + " " + (y2 - by + d)
-  }, svgPathProps)), debug && React.createElement(React.Fragment, null, React.createElement("circle", {
+  }, svgProps, t(null, {
+    styleNames: ["edgePath"].concat(themePrefix ? [themePrefix + "EdgePath"] : [], selected ? ["selectedEdgePath"] : [""], selected && themePrefix2 ? ["selected" + themePrefix2 + "EdgePath"] : [""]),
+    className: svgClassName,
+    style: svgStyle
+  }))), debug && React.createElement(React.Fragment, null, React.createElement("circle", {
     cx: x1 - bx + d,
     cy: y1 - by + d,
     r: "3",
@@ -577,17 +592,31 @@ Edge.propTypes = {
   className: PropTypes.string,
   debug: PropTypes.bool,
   id: PropTypes.string,
+  selected: PropTypes.bool,
   shadowRadius: PropTypes.number,
   strokeColor: PropTypes.string,
   strokeWidth: PropTypes.number,
   style: PropTypes.object,
   svgPathProps: PropTypes.object,
+  theme: PropTypes.any,
+  themePrefix: PropTypes.string,
   x: PropTypes.number,
   x1: PropTypes.number,
   x2: PropTypes.number,
   y: PropTypes.number,
   y1: PropTypes.number,
   y2: PropTypes.number
+};
+Edge.defaultTheme = {
+  edge: {},
+  edgePath: {
+    stroke: "#000",
+    strokeLinecap: "round"
+  },
+  selectedEdge: {},
+  selectedEdgePath: {
+    stroke: "red"
+  }
 };
 
 var Handle = function Handle(_ref) {
@@ -624,7 +653,7 @@ var Handle = function Handle(_ref) {
     onMouseUp: endConnect,
     onTouchEnd: endConnect,
     ref: handleRef
-  }, t.apply(void 0, ["handle"].concat(input ? ["inputHandle"] : [], output ? ["outputHandle"] : [], connected ? ["connectedHandle"] : []))), children);
+  }, t.apply(void 0, [null, "handle"].concat(input ? ["inputHandle"] : [], output ? ["outputHandle"] : [], connected ? ["connectedHandle"] : []))), children);
 };
 
 Handle.propTypes = {
@@ -664,6 +693,55 @@ Handle.defaultTheme = {
   connectedHandle: {}
 };
 
+var classnames = createCommonjsModule(function (module) {
+/*!
+  Copyright (c) 2016 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+/* global define */
+
+(function () {
+	var hasOwn = {}.hasOwnProperty;
+
+	function classNames () {
+		var classes = [];
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg;
+
+			if (argType === 'string' || argType === 'number') {
+				classes.push(arg);
+			} else if (Array.isArray(arg)) {
+				classes.push(classNames.apply(null, arg));
+			} else if (argType === 'object') {
+				for (var key in arg) {
+					if (hasOwn.call(arg, key) && arg[key]) {
+						classes.push(key);
+					}
+				}
+			}
+		}
+
+		return classes.join(' ');
+	}
+
+	if ('object' !== 'undefined' && module.exports) {
+		module.exports = classNames;
+	} else if (typeof undefined === 'function' && typeof undefined.amd === 'object' && undefined.amd) {
+		// register as 'classnames', consistent with npm package name
+		undefined('classnames', [], function () {
+			return classNames;
+		});
+	} else {
+		window.classNames = classNames;
+	}
+}());
+});
+
 var Attribute = function Attribute(_ref) {
   var children = _ref.children,
       component = _ref.component,
@@ -675,18 +753,8 @@ var Attribute = function Attribute(_ref) {
       draggable = _ref.draggable,
       handleClassName = _ref.handleClassName,
       input = _ref.input,
-      inputConnected = _ref.inputConnected,
-      inputHandleRef = _ref.inputHandleRef,
       isNodeAttribute = _ref.isNodeAttribute,
-      onInputClick = _ref.onInputClick,
-      onInputConnect = _ref.onInputConnect,
-      onInputConnectionStart = _ref.onInputConnectionStart,
-      onOutputClick = _ref.onOutputClick,
-      onOutputConnect = _ref.onOutputConnect,
-      onOutputConnectionStart = _ref.onOutputConnectionStart,
       output = _ref.output,
-      outputConnected = _ref.outputConnected,
-      outputHandleRef = _ref.outputHandleRef,
       render = _ref.render,
       single = _ref.single,
       style = _ref.style,
@@ -704,25 +772,28 @@ var Attribute = function Attribute(_ref) {
     style: contentStyle,
     theme: contentTheme
   };
-  return React.createElement("div", t.apply(void 0, sn), input && React.createElement(Handle, {
-    className: handleClassName,
-    connected: inputConnected,
-    handleRef: inputHandleRef,
-    onClick: onInputClick,
-    onConnect: onInputConnect,
-    onConnectionStart: onInputConnectionStart,
+  return React.createElement("div", t.apply(void 0, [null].concat(sn)), input && React.createElement(Handle, {
+    className: classnames(handleClassName, input && input.className),
+    connected: input && input.connected,
+    handleRef: input ? input.handleRef : undefined,
+    onClick: input ? input.onClick : undefined,
+    onConnect: input ? input.onConnect : undefined,
+    onConnectionStart: input ? input.onConnectionStart : undefined,
     input: true,
+    style: input ? input.style : undefined,
     theme: theme
   }), React.createElement("div", {
     onMouseDown: stopPropagation,
     onTouchStart: stopPropagation
   }, component ? React.createElement(component, contentProps) : render ? render(contentProps) : children), output && React.createElement(Handle, {
-    handleRef: outputHandleRef,
-    onClick: onOutputClick,
-    onConnect: onOutputConnect,
-    onConnectionStart: onOutputConnectionStart,
+    className: classnames(handleClassName, output && output.className),
+    connected: output && output.connected,
+    handleRef: output ? output.handleRef : undefined,
+    onClick: output ? output.onClick : undefined,
+    onConnect: output ? output.onConnect : undefined,
+    onConnectionStart: output ? output.onConnectionStart : undefined,
     output: true,
-    connected: outputConnected,
+    style: output ? output.style : undefined,
     theme: theme
   }));
 };
@@ -738,25 +809,31 @@ Attribute.propTypes = {
   draggable: PropTypes.bool,
   handleClassName: PropTypes.string,
   handleStyle: PropTypes.object,
-  input: PropTypes.bool,
-  inputConnected: PropTypes.bool,
-  inputHandleRef: PropTypes.func,
+  input: PropTypes.shape({
+    className: PropTypes.string,
+    connected: PropTypes.bool,
+    handleRef: PropTypes.func,
+    onClick: PropTypes.func,
+    onConnect: PropTypes.func,
+    onConnectionStart: PropTypes.func,
+    style: PropTypes.object
+  }),
   isNodeAttribute: PropTypes.bool,
-  onInputClick: PropTypes.func,
-  onInputConnect: PropTypes.func,
-  onInputConnectionStart: PropTypes.func,
-  onOutputClick: PropTypes.func,
-  onOutputConnect: PropTypes.func,
-  onOutputConnectionStart: PropTypes.func,
-  output: PropTypes.bool,
-  outputConnected: PropTypes.bool,
-  outputHandleRef: PropTypes.func,
+  output: PropTypes.shape({
+    className: PropTypes.string,
+    connected: PropTypes.bool,
+    handleRef: PropTypes.func,
+    onClick: PropTypes.func,
+    onConnect: PropTypes.func,
+    onConnectionStart: PropTypes.func,
+    style: PropTypes.object
+  }),
   render: PropTypes.func,
   single: PropTypes.bool,
   style: PropTypes.object,
   theme: PropTypes.any
 };
-Attribute.defaultTheme = {
+Attribute.defaultTheme = _extends({}, Handle.defaultTheme, {
   attribute: {
     padding: "10px 20px",
     position: "relative"
@@ -767,7 +844,7 @@ Attribute.defaultTheme = {
     textAlign: "right"
   },
   inputOutputAttribute: {}
-};
+});
 
 var attributePropTypeShape = {
   children: PropTypes.node,
@@ -776,10 +853,14 @@ var attributePropTypeShape = {
   draggable: PropTypes.bool,
   id: PropTypes.string.isRequired,
   input: PropTypes.bool,
+  inputClassName: PropTypes.string,
   inputConnected: PropTypes.bool,
+  inputStyle: PropTypes.object,
   isNodeAttribute: PropTypes.bool,
   output: PropTypes.bool,
+  outputClassName: PropTypes.string,
   outputConnected: PropTypes.bool,
+  outputStyle: PropTypes.object,
   render: PropTypes.func,
   single: PropTypes.bool,
   theme: PropTypes.any
@@ -862,58 +943,64 @@ function (_React$PureComponent) {
         contentTheme: a.theme,
         data: a.data,
         draggable: a.draggable,
-        input: a.input,
-        inputConnected: a.inputConnected,
-        inputHandleRef: handleRefs ? function (e) {
-          _this.setHandleRef(a, "input", e);
+        input: a.input ? {
+          className: a.inputClassName,
+          connected: a.inputConnected,
+          handleRef: handleRefs ? function (e) {
+            _this.setHandleRef(a, "input", e);
+          } : undefined,
+          onClick: function onClick(e) {
+            return _this.handleClick(e, {
+              type: "input",
+              a: a,
+              i: i
+            });
+          },
+          onConnectionStart: function onConnectionStart(e) {
+            return _this.handleConnectionStart(e, {
+              type: "input",
+              a: a,
+              i: i
+            });
+          },
+          onConnect: function onConnect(e) {
+            return _this.handleConnect(e, {
+              type: "input",
+              a: a,
+              i: i
+            });
+          },
+          style: a.inputStyle
         } : undefined,
         isNodeAttribute: a.isNodeAttribute,
-        onInputClick: function onInputClick(e) {
-          return _this.handleClick(e, {
-            type: "input",
-            a: a,
-            i: i
-          });
-        },
-        onInputConnectionStart: function onInputConnectionStart(e) {
-          return _this.handleConnectionStart(e, {
-            type: "input",
-            a: a,
-            i: i
-          });
-        },
-        onInputConnect: function onInputConnect(e) {
-          return _this.handleConnect(e, {
-            type: "input",
-            a: a,
-            i: i
-          });
-        },
-        onOutputClick: function onOutputClick(e) {
-          return _this.handleClick(e, {
-            type: "output",
-            a: a,
-            i: i
-          });
-        },
-        onOutputConnectionStart: function onOutputConnectionStart(e) {
-          return _this.handleConnectionStart(e, {
-            type: "output",
-            a: a,
-            i: i
-          });
-        },
-        onOutputConnect: function onOutputConnect(e) {
-          return _this.handleConnect(e, {
-            type: "output",
-            a: a,
-            i: i
-          });
-        },
-        output: a.output,
-        outputConnected: a.outputConnected,
-        outputHandleRef: handleRefs ? function (e) {
-          _this.setHandleRef(a, "output", e);
+        output: a.output ? {
+          className: a.outputClassName,
+          connected: a.outputConnected,
+          handleRef: handleRefs ? function (e) {
+            _this.setHandleRef(a, "output", e);
+          } : undefined,
+          onClick: function onClick(e) {
+            return _this.handleClick(e, {
+              type: "output",
+              a: a,
+              i: i
+            });
+          },
+          onConnect: function onConnect(e) {
+            return _this.handleConnect(e, {
+              type: "output",
+              a: a,
+              i: i
+            });
+          },
+          onConnectionStart: function onConnectionStart(e) {
+            return _this.handleConnectionStart(e, {
+              type: "output",
+              a: a,
+              i: i
+            });
+          },
+          style: a.outputStyle
         } : undefined,
         render: a.render,
         single: a.single,
@@ -19965,12 +20052,12 @@ var NodeAttribute = function NodeAttribute(_ref) {
       _ref$theme = _ref.theme,
       theme = _ref$theme === void 0 ? NodeAttribute.defaultTheme : _ref$theme;
   var t = enhancedThemeable("nodeAttributeContent", theme, className, style);
-  return React.createElement("div", t("nodeAttributeContent"), data.icon && React.createElement("img", _extends({
-    src: data.icon,
-    alt: data.title || data.type,
+  return React.createElement("div", t(null, "nodeAttributeContent"), data.nodeIcon && React.createElement("img", _extends({
+    src: data.nodeIcon,
+    alt: data.nodeTitle || data.nodeType,
     width: 16,
     height: 16
-  }, t("nodeAttributeContentImage"))), React.createElement("span", t("nodeAttributeContentTitle"), data.title || data.type));
+  }, t(null, "nodeAttributeContentImage"))), React.createElement("span", t(null, "nodeAttributeContentTitle"), data.nodeTitle || data.nodeType));
 };
 
 NodeAttribute.propTypes = {
@@ -20012,6 +20099,9 @@ var defaultTheme = _extends({}, Handle.defaultTheme, Attribute.defaultTheme, {
     MozUserSelect: "none",
     msUserSelect: "none",
     userSelect: "none"
+  },
+  selectedNode: {
+    border: "1px solid red"
   }
 });
 
@@ -20021,7 +20111,13 @@ function (_React$PureComponent) {
   _inheritsLoose(Node, _React$PureComponent);
 
   function Node() {
-    return _React$PureComponent.apply(this, arguments) || this;
+    var _temp, _this;
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return (_temp = _this = _React$PureComponent.call.apply(_React$PureComponent, [this].concat(args)) || this, _this.moved = false, _temp) || _assertThisInitialized(_this);
   }
 
   var _proto = Node.prototype;
@@ -20045,8 +20141,8 @@ function (_React$PureComponent) {
     e.preventDefault();
     e.stopPropagation();
 
-    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
+    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      args[_key2 - 1] = arguments[_key2];
     }
 
     this.handleEvent.apply(this, ["onConnectionStart", e].concat(args));
@@ -20056,23 +20152,79 @@ function (_React$PureComponent) {
     e.preventDefault();
     e.stopPropagation();
 
-    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-      args[_key2 - 1] = arguments[_key2];
+    for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+      args[_key3 - 1] = arguments[_key3];
     }
 
     this.handleEvent.apply(this, ["onConnect", e].concat(args));
   };
 
   _proto.handleHandleClick = function handleHandleClick() {
-    for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-      args[_key3] = arguments[_key3];
+    for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+      args[_key4] = arguments[_key4];
     }
 
     this.handleEvent.apply(this, ["onHandleClick"].concat(args));
   };
 
+  _proto.handleStart = function handleStart() {
+    this.moved = false;
+  };
+
+  _proto.handleDrag = function handleDrag(e, _ref2) {
+    var x = _ref2.x,
+        y = _ref2.y,
+        deltaX = _ref2.deltaX,
+        deltaY = _ref2.deltaY,
+        lastX = _ref2.lastX,
+        lastY = _ref2.lastY;
+
+    if (deltaX > 0 || deltaY > 0) {
+      this.moved = true;
+    }
+
+    if (this.props.onDrag) {
+      this.props.onDrag(e, {
+        x: x,
+        y: y,
+        deltaX: deltaX,
+        deltaY: deltaY,
+        lastX: lastX,
+        lastY: lastY
+      });
+    }
+  };
+
+  _proto.handleStop = function handleStop(e, _ref3) {
+    var x = _ref3.x,
+        y = _ref3.y,
+        deltaX = _ref3.deltaX,
+        deltaY = _ref3.deltaY,
+        lastX = _ref3.lastX,
+        lastY = _ref3.lastY;
+
+    if (this.props.onDragEnd) {
+      this.props.onDragEnd(e, {
+        x: x,
+        y: y,
+        deltaX: deltaX,
+        deltaY: deltaY,
+        lastX: lastX,
+        lastY: lastY
+      });
+    }
+
+    if (!this.moved) {
+      if (this.props.onClick) {
+        this.props.onClick(e);
+      }
+    }
+
+    this.moved = false;
+  };
+
   _proto.render = function render() {
-    var _this = this;
+    var _this2 = this;
 
     var _props = this.props,
         attributes = _props.attributes,
@@ -20083,9 +20235,8 @@ function (_React$PureComponent) {
         draggable = _props$draggable === void 0 ? true : _props$draggable,
         handleRefs = _props.handleRefs,
         nodeAttribute = _props.nodeAttribute,
-        _onDrag = _props.onDrag,
-        onDragEnd = _props.onDragEnd,
         position = _props.position,
+        selected = _props.selected,
         style = _props.style,
         theme = _props.theme;
     var t = enhancedThemeable("node", theme, className, style);
@@ -20093,48 +20244,30 @@ function (_React$PureComponent) {
     return React.createElement(Draggable, {
       defaultPosition: defaultPosition,
       disabled: !draggable,
-      onDrag: function onDrag(e, _ref2) {
-        var x = _ref2.x,
-            y = _ref2.y,
-            deltaX = _ref2.deltaX,
-            deltaY = _ref2.deltaY,
-            lastX = _ref2.lastX,
-            lastY = _ref2.lastY;
-        return _onDrag && _onDrag(e, {
-          x: x,
-          y: y,
-          deltaX: deltaX,
-          deltaY: deltaY,
-          lastX: lastX,
-          lastY: lastY
-        });
+      onStart: function onStart() {
+        return _this2.handleStart();
       },
-      onStop: function onStop(e, _ref3) {
-        var x = _ref3.x,
-            y = _ref3.y,
-            deltaX = _ref3.deltaX,
-            deltaY = _ref3.deltaY,
-            lastX = _ref3.lastX,
-            lastY = _ref3.lastY;
-        return onDragEnd && onDragEnd(e, {
-          x: x,
-          y: y,
-          deltaX: deltaX,
-          deltaY: deltaY,
-          lastX: lastX,
-          lastY: lastY
-        });
+      onDrag: function onDrag(e, d) {
+        return _this2.handleDrag(e, d);
+      },
+      onStop: function onStop(e, d) {
+        return _this2.handleStop(e, d);
       },
       position: position
-    }, React.createElement("div", t({
-      styleNames: ["node"],
+    }, React.createElement("div", _extends({
+      onClick: function onClick(e) {
+        e.stopPropagation();
+      }
+    }, t(null, {
+      styleNames: ["node"].concat(selected ? ["selectedNode"] : []),
       style: {
         left: "0",
         position: "absolute",
         top: "0"
       }
-    }), React.createElement(AttributeList, {
+    })), React.createElement(AttributeList, {
       attributes: [_extends({}, nodeAttribute, {
+        data: data,
         id: ""
       }, dna ? {
         component: dna,
@@ -20149,13 +20282,13 @@ function (_React$PureComponent) {
       }) || []),
       handleRefs: handleRefs,
       onConnectionStart: function onConnectionStart(e, d) {
-        return _this.handleConnectionStart(e, d);
+        return _this2.handleConnectionStart(e, d);
       },
       onConnect: function onConnect(e, d) {
-        return _this.handleConnect(e, d);
+        return _this2.handleConnect(e, d);
       },
       onHandleClick: function onHandleClick(e, d) {
-        return _this.handleHandleClick(e, d);
+        return _this2.handleHandleClick(e, d);
       },
       theme: theme
     })));
@@ -20178,6 +20311,7 @@ Node.propTypes = {
   nodeAttribute: PropTypes.shape(_extends({}, AttributeList.attributePropTypeShape, {
     id: PropTypes.any
   })),
+  onClick: PropTypes.func,
   onConnect: PropTypes.func,
   // eslint-disable-line react/no-unused-prop-types
   onConnectionStart: PropTypes.func,
@@ -20191,6 +20325,7 @@ Node.propTypes = {
     x: PropTypes.number,
     y: PropTypes.number
   }),
+  selected: PropTypes.bool,
   style: PropTypes.object,
   theme: PropTypes.any
 };
@@ -20331,6 +20466,56 @@ function (_React$PureComponent) {
     }
   };
 
+  _proto.handleNodeClick = function handleNodeClick(e, n, i) {
+    if (!this.props.onSelect) return;
+
+    if (this.props.nodeSelectable && this.props.selectedNodeIndex !== i) {
+      this.props.onSelect(e, {
+        node: n,
+        edge: null,
+        index: i
+      });
+    }
+
+    if (this.props.onNodeClick) {
+      this.props.onNodeClick(e, {
+        node: n,
+        index: i
+      });
+    }
+  };
+
+  _proto.handleWorkspaceClick = function handleWorkspaceClick(e) {
+    if (!this.props.onSelect) return;
+
+    if (this.props.selectedNodeIndex !== -1 || this.props.selectedEdgeIndex !== -1) {
+      this.props.onSelect(e, {
+        node: null,
+        edge: null,
+        index: -1
+      });
+    }
+  };
+
+  _proto.handleEdgeClick = function handleEdgeClick(ev, e, i) {
+    ev.stopPropagation();
+
+    if (this.props.edgeSelectable && this.props.onSelect && this.props.selectedEdgeIndex !== i) {
+      this.props.onSelect(ev, {
+        node: null,
+        edge: e,
+        index: i
+      });
+    }
+
+    if (this.props.onEdgeClick) {
+      this.props.onEdgeClick(ev, {
+        edge: e,
+        index: i
+      });
+    }
+  };
+
   _proto.getHandleElement = function getHandleElement(edge) {
     if (!this.handleRefs || !this.state.rendered) return null;
     var fa = this.handleRefs.get(edge.from.node);
@@ -20338,7 +20523,7 @@ function (_React$PureComponent) {
     if (!fa || !ta) return null;
     var fh = fa.get(edge.from.attribute);
     var th = ta.get(edge.to.attribute);
-    if (!fh || !th) return null;
+    if (!fh || !th || !fh.output || !th.input) return null;
     return {
       from: fh.output,
       to: th.input
@@ -20362,16 +20547,19 @@ function (_React$PureComponent) {
         id = _props.id,
         _props$nodeAttribute = _props.nodeAttribute,
         nodeAttributeChildren = _props$nodeAttribute.children,
+        nodeAttributeClassName = _props$nodeAttribute.className,
         nodeAttributeComponent = _props$nodeAttribute.component,
         nodeAttributeDraggable = _props$nodeAttribute.draggable,
         nodeAttributeRender = _props$nodeAttribute.render,
         nodeAttributeTheme = _props$nodeAttribute.theme,
+        nodeAttributeStyle = _props$nodeAttribute.style,
         nodeTypes = _props.nodeTypes,
-        onEdgeClick = _props.onEdgeClick,
         onNodeData = _props.onNodeData,
         onNodeDrag = _props.onNodeDrag,
         onNodeDragEnd = _props.onNodeDragEnd,
         onWorkspaceScroll = _props.onWorkspaceScroll,
+        selectedEdgeIndex = _props.selectedEdgeIndex,
+        selectedNodeIndex = _props.selectedNodeIndex,
         style = _props.style,
         theme = _props.theme,
         workspaceCenter = _props.workspaceCenter,
@@ -20382,7 +20570,6 @@ function (_React$PureComponent) {
     var ce = this.state.connectingEdge;
     var t = enhancedThemeable("editor", theme, className, style);
     var workspaceRect = this.workspaceElement ? this.workspaceElement.getBoundingClientRect() : null;
-    var edgePathTheme = t("edgePath");
     return React.createElement(ScrollBox, {
       center: workspaceCenter,
       width: workspaceWidth,
@@ -20411,8 +20598,11 @@ function (_React$PureComponent) {
           gridType: gridType,
           gridRef: function gridRef(e) {
             _this2.workspaceElement = e;
+          },
+          onClick: function onClick(e) {
+            return _this2.handleWorkspaceClick(e);
           }
-        }, props, t({
+        }, props, t(null, {
           styleNames: ["grid"],
           style: s
         })));
@@ -20442,20 +20632,16 @@ function (_React$PureComponent) {
         y1: y1,
         x2: x2,
         y2: y2,
+        selected: selectedEdgeIndex === i,
         shadowRadius: edgeShadowRadius,
         strokeColor: edgeStrokeColor,
         strokeWidth: edgeStrokeWidth,
-        svgPathProps: _extends({
-          onClick: function onClick(evt) {
-            return onEdgeClick && onEdgeClick(evt, {
-              edge: e,
-              index: i
-            });
+        svgPathProps: {
+          onClick: function onClick(ev) {
+            return _this2.handleEdgeClick(ev, e, i);
           }
-        }, edgePathTheme),
-        style: {
-          position: "absolute"
-        }
+        },
+        theme: theme
       });
     }), data && data.nodes && data.nodes.map(function (n, i) {
       var nt = nodeTypes && n.type && nodeTypes[n.type];
@@ -20465,11 +20651,11 @@ function (_React$PureComponent) {
         _this2.handleRefs.set(n.id, new Map());
       }
 
-      var nodeData = onNodeData ? onNodeData({
+      var nodeData = _extends({}, n.data, onNodeData ? onNodeData({
         node: n,
         nodeIndex: i,
         nodeType: nt
-      }) : {};
+      }) : {});
       return React.createElement(Node, {
         attributes: nt.attributes.map(function (a) {
           return _extends({}, a, {
@@ -20482,15 +20668,13 @@ function (_React$PureComponent) {
           });
         }),
         key: n.id,
-        data: _extends({}, n.data, nodeData) // eslint-disable-next-line react/jsx-handler-names
+        data: nodeData // eslint-disable-next-line react/jsx-handler-names
         ,
         handleRefs: _this2.handleRefs.get(n.id),
         nodeAttribute: {
           children: nodeAttributeChildren,
+          className: nodeAttributeClassName,
           component: nodeAttributeComponent,
-          data: _extends({
-            type: n.type
-          }, nt.data),
           draggable: nodeAttributeDraggable,
           input: nt.input,
           inputConnected: data.edges && data.edges.some(function (e) {
@@ -20501,7 +20685,8 @@ function (_React$PureComponent) {
             return e.from.node === n.id && e.from.attribute === "";
           }),
           render: nodeAttributeRender,
-          theme: nodeAttributeTheme
+          theme: nodeAttributeTheme,
+          style: nodeAttributeStyle
         },
         nodeId: n.id,
         onConnectionStart: function onConnectionStart(e, d) {
@@ -20509,6 +20694,9 @@ function (_React$PureComponent) {
         },
         onConnect: function onConnect(e, d) {
           return _this2.handleConnect(d, n);
+        },
+        onClick: function onClick(e) {
+          return _this2.handleNodeClick(e, n, i);
         },
         onDrag: function onDrag(e, _ref4) {
           var x = _ref4.x,
@@ -20537,9 +20725,12 @@ function (_React$PureComponent) {
           x: n.x,
           y: n.y
         },
+        selected: selectedNodeIndex === i,
         theme: theme
       });
-    }), ce && React.createElement(Edge, _extends({
+    }), ce && React.createElement(Edge, {
+      x: ce.x1 < ce.x2 ? ce.x1 : ce.x2,
+      y: ce.y1 < ce.y2 ? ce.y1 : ce.y2,
       x1: ce.x1,
       y1: ce.y1,
       x2: ce.x2,
@@ -20547,16 +20738,12 @@ function (_React$PureComponent) {
       shadowRadius: edgeShadowRadius,
       strokeColor: edgeStrokeColor,
       strokeWidth: edgeStrokeWidth,
-      svgPathProps: t("edgePath", "connectingEdgePath")
-    }, t({
-      styleNames: ["edge", "connectingEdge"],
+      theme: theme,
+      themePrefix: "connecting",
       style: {
-        position: "absolute",
-        left: (ce.x1 < ce.x2 ? ce.x1 : ce.x2) + "px",
-        top: (ce.y1 < ce.y2 ? ce.y1 : ce.y2) + "px",
         pointerEvents: "none"
       }
-    }))));
+    }));
   };
 
   return Editor;
@@ -20577,22 +20764,30 @@ Editor.propTypes = {
     edges: PropTypes.array,
     nodes: PropTypes.array
   }),
+  edgeSelectable: PropTypes.bool,
   id: PropTypes.string,
   nodeAttribute: PropTypes.shape({
     children: PropTypes.node,
+    className: PropTypes.string,
     component: PropTypes.oneOf([PropTypes.element, PropTypes.func]),
     draggable: PropTypes.bool,
     render: PropTypes.func,
-    theme: PropTypes.any
+    theme: PropTypes.any,
+    style: PropTypes.object
   }),
+  nodeSelectable: PropTypes.bool,
   nodeTypes: PropTypes.object,
   onConnect: PropTypes.func,
   onEdgeClick: PropTypes.func,
   onHandleClick: PropTypes.func,
+  onNodeClick: PropTypes.func,
   onNodeData: PropTypes.func,
   onNodeDrag: PropTypes.func,
   onNodeDragEnd: PropTypes.func,
+  onSelect: PropTypes.func,
   onWorkspaceScroll: PropTypes.func,
+  selectedEdgeIndex: PropTypes.number,
+  selectedNodeIndex: PropTypes.number,
   style: PropTypes.object,
   theme: PropTypes.any,
   workspaceCenter: PropTypes.bool,
@@ -20608,6 +20803,8 @@ Editor.defaultProps = {
     gridType: "line"
   },
   nodeAttribute: {},
+  selectedEdgeIndex: -1,
+  selectedNodeIndex: -1,
   workspaceHeight: 2000,
   workspaceWidth: 2000
 };
