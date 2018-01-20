@@ -20266,7 +20266,7 @@ function (_React$PureComponent) {
         top: "0"
       }
     })), React.createElement(AttributeList, {
-      attributes: [_extends({}, nodeAttribute, {
+      attributes: (nodeAttribute ? [_extends({}, nodeAttribute, {
         data: data,
         id: ""
       }, dna ? {
@@ -20275,7 +20275,7 @@ function (_React$PureComponent) {
       } : {}, {
         isNodeAttribute: true,
         single: !attributes || attributes.length === 0
-      })].concat(attributes.map(function (a) {
+      })] : []).concat(attributes.map(function (a) {
         return _extends({}, a, {
           data: data
         });
@@ -20667,10 +20667,10 @@ function (_React$PureComponent) {
             })
           });
         }),
-        key: n.id,
-        data: nodeData // eslint-disable-next-line react/jsx-handler-names
-        ,
+        className: nt.className,
+        data: nodeData,
         handleRefs: _this2.handleRefs.get(n.id),
+        key: n.id,
         nodeAttribute: {
           children: nodeAttributeChildren,
           className: nodeAttributeClassName,
@@ -20726,6 +20726,7 @@ function (_React$PureComponent) {
           y: n.y
         },
         selected: selectedNodeIndex === i,
+        style: nt.style,
         theme: theme
       });
     }), ce && React.createElement(Edge, {
