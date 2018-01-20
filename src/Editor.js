@@ -32,14 +32,18 @@ export default class Editor extends React.PureComponent {
       render: PropTypes.func,
       theme: PropTypes.any
     }),
+    nodeSelectable: PropTypes.bool,
     nodeTypes: PropTypes.object,
     onConnect: PropTypes.func,
     onEdgeClick: PropTypes.func,
     onHandleClick: PropTypes.func,
+    onNodeClick: PropTypes.func,
     onNodeData: PropTypes.func,
     onNodeDrag: PropTypes.func,
     onNodeDragEnd: PropTypes.func,
+    onSelectedNodeChange: PropTypes.func,
     onWorkspaceScroll: PropTypes.func,
+    selectedNodeIndex: PropTypes.number,
     style: PropTypes.object,
     theme: PropTypes.any,
     workspaceCenter: PropTypes.bool,
@@ -56,6 +60,7 @@ export default class Editor extends React.PureComponent {
       gridType: "line"
     },
     nodeAttribute: {},
+    selectedNodeIndex: -1,
     workspaceHeight: 2000,
     workspaceWidth: 2000
   }
@@ -183,6 +188,26 @@ export default class Editor extends React.PureComponent {
     }
   }
 
+  handleNodeClick(e, n, i) {
+    if (!this.props.onSelectedNodeChange) return;
+    if (this.props.nodeSelectable && this.props.selectedNodeIndex !== i) {
+      this.props.onSelectedNodeChange(i, n);
+    }
+    if (this.props.onNodeClick) {
+      this.props.onNodeClick(e, {
+        node: n,
+        index: i
+      });
+    }
+  }
+
+  handleWorkspaceClick() {
+    if (!this.props.onSelectedNodeChange) return;
+    if (this.props.selectedNodeIndex !== -1) {
+      this.props.onSelectedNodeChange(-1, null);
+    }
+  }
+
   getHandleElement(edge) {
     if (!this.handleRefs || !this.state.rendered) return null;
 
@@ -237,6 +262,7 @@ export default class Editor extends React.PureComponent {
       onNodeDrag,
       onNodeDragEnd,
       onWorkspaceScroll,
+      selectedNodeIndex,
       style,
       theme,
       workspaceCenter,
@@ -276,6 +302,7 @@ export default class Editor extends React.PureComponent {
             gridSize={gridSize}
             gridType={gridType}
             gridRef={e => { this.workspaceElement = e; }}
+            onClick={() => this.handleWorkspaceClick()}
             {...props}
             {...t({
               styleNames: ["grid"],
@@ -372,6 +399,7 @@ export default class Editor extends React.PureComponent {
               nodeId={n.id}
               onConnectionStart={(e, d) => this.handleConnectionStart(e, d, n)}
               onConnect={(e, d) => this.handleConnect(d, n)}
+              onClick={e => this.handleNodeClick(e, n, i)}
               onDrag={
                 (e, { x, y }) => onNodeDrag && onNodeDrag(e, {
                   node: n,
@@ -390,6 +418,7 @@ export default class Editor extends React.PureComponent {
               }
               onHandleClick={(e, a) => this.handleHandleClick(e, a, n, i)}
               position={{ x: n.x, y: n.y }}
+              selected={selectedNodeIndex === i}
               theme={theme} />
           );
         })}

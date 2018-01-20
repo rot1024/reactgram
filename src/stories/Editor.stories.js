@@ -101,7 +101,8 @@ export default () => {
            }
          ]
        }
-     }
+     },
+     selectedNode: -1
    }
 
    handleConnect({ from, to }) {
@@ -163,13 +164,20 @@ export default () => {
      });
    }
 
+   handleSelectedNodeChange(i) {
+     this.setState({
+       selectedNode: i
+     });
+   }
+
    render() {
      const { appearance, theme } = this.props;
-     const { data, nodeTypes } = this.state;
+     const { data, nodeTypes, selectedNode } = this.state;
      return (
        <Component
          appearance={appearance}
          data={data}
+         nodeSelectable
          nodeTypes={nodeTypes}
          onConnect={this.handleConnect.bind(this)}
          onEdgeClick={(e, d) => console.log("edgeClick", d)}
@@ -178,6 +186,8 @@ export default () => {
          })}
          onNodeDrag={(e, a) => this.handleNodeMove(a)}
          onHandleClick={(e, d) => console.log("handleClick", d)}
+         onSelectedNodeChange={i => this.handleSelectedNodeChange(i)}
+         selectedNodeIndex={selectedNode}
          theme={theme} />
      );
    }
@@ -243,6 +253,9 @@ export default () => {
             MozUserSelect: "none",
             msUserSelect: "none",
             userSelect: "none"
+          },
+          selectedNode: {
+            border: "2px solid #F8E71C"
           }
         }} />
     ));

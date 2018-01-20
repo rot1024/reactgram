@@ -47,12 +47,14 @@ export default class Node extends React.PureComponent {
       ...AttributeList.attributePropTypeShape,
       id: PropTypes.any
     }),
+    onClick: PropTypes.func,
     onConnect: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     onConnectionStart: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     onDrag: PropTypes.func,
     onDragEnd: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     onHandleClick: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     position: PropTypes.shape({ x: PropTypes.number, y: PropTypes.number }),
+    selected: PropTypes.bool,
     style: PropTypes.object,
     theme: PropTypes.any
   }
@@ -62,6 +64,8 @@ export default class Node extends React.PureComponent {
   }
 
   static defaultTheme = defaultTheme
+
+  moved = false
 
   handleEvent(propName, e, { attribute, index, type }) {
     if (this.props[propName]) {
@@ -90,6 +94,31 @@ export default class Node extends React.PureComponent {
     this.handleEvent("onHandleClick", ...args);
   }
 
+  handleStart() {
+    this.moved = false;
+  }
+
+  handleDrag(e, { x, y, deltaX, deltaY, lastX, lastY }) {
+    if (deltaX > 0 || deltaY > 0) {
+      this.moved = true;
+    }
+    if (this.props.onDrag) {
+      this.props.onDrag(e, { x, y, deltaX, deltaY, lastX, lastY });
+    }
+  }
+
+  handleStop(e, { x, y, deltaX, deltaY, lastX, lastY }) {
+    if (this.props.onDragEnd) {
+      this.props.onDragEnd(e, { x, y, deltaX, deltaY, lastX, lastY });
+    }
+    if (!this.moved) {
+      if (this.props.onClick) {
+        this.props.onClick(e);
+      }
+    }
+    this.moved = false;
+  }
+
   render() {
     const {
       attributes,
@@ -99,9 +128,8 @@ export default class Node extends React.PureComponent {
       draggable = true,
       handleRefs,
       nodeAttribute,
-      onDrag,
-      onDragEnd,
       position,
+      selected,
       style,
       theme
     } = this.props;
@@ -116,30 +144,14 @@ export default class Node extends React.PureComponent {
       <Draggable
         defaultPosition={defaultPosition}
         disabled={!draggable}
-        onDrag={
-          (e, {
-            x,
-            y,
-            deltaX,
-            deltaY,
-            lastX,
-            lastY
-          }) => onDrag && onDrag(e, { x, y, deltaX, deltaY, lastX, lastY })
-        }
-        onStop={
-          (e, {
-            x,
-            y,
-            deltaX,
-            deltaY,
-            lastX,
-            lastY
-          }) => onDragEnd && onDragEnd(e, { x, y, deltaX, deltaY, lastX, lastY })
-        }
+        onStart={() => this.handleStart()}
+        onDrag={(e, d) => this.handleDrag(e, d)}
+        onStop={(e, d) => this.handleStop(e, d)}
         position={position}>
         <div
+          onClick={e => { e.stopPropagation(); }}
           {...t({
-            styleNames: ["node"],
+            styleNames: ["node", ...selected ? ["selectedNode"] : []],
             style: {
               left: "0",
               position: "absolute",
