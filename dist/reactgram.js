@@ -20388,8 +20388,7 @@ function (_React$PureComponent) {
 
   _proto.handleMouseMove = function handleMouseMove(e) {
     if (this.state.connectingEdge) {
-      var ev = e.targetTouches ? e.targetTouches[0] : e;
-      if (!ev) return;
+      var ev = e.changedTouches && e.changedTouches[0] || e;
       this.setState({
         connectingEdge: _extends({}, this.state.connectingEdge, {
           x2: ev.clientX + this.scrollElement.scrollLeft,
