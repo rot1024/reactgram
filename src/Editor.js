@@ -384,10 +384,10 @@ export default class Editor extends React.PureComponent {
                   e => e.from.node === n.id && e.from.attribute === a.id
                 )
               }))}
-              key={n.id}
+              className={nt.className}
               data={nodeData}
-              // eslint-disable-next-line react/jsx-handler-names
               handleRefs={this.handleRefs.get(n.id)}
+              key={n.id}
               nodeAttribute={{
                 children: nodeAttributeChildren,
                 className: nodeAttributeClassName,
@@ -428,6 +428,7 @@ export default class Editor extends React.PureComponent {
               onHandleClick={(e, a) => this.handleHandleClick(e, a, n, i)}
               position={{ x: n.x, y: n.y }}
               selected={selectedNodeIndex === i}
+              style={nt.style}
               theme={theme} />
           );
         })}
