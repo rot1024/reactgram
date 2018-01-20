@@ -107,11 +107,13 @@ export default class Editor extends React.PureComponent {
 
   handleMouseMove(e) {
     if (this.state.connectingEdge) {
+      const ev = e.targetTouches ? e.targetTouches[0] : e;
+      if (!ev) return;
       this.setState({
         connectingEdge: {
           ...this.state.connectingEdge,
-          x2: e.clientX + this.scrollElement.scrollLeft,
-          y2: e.clientY + this.scrollElement.scrollTop
+          x2: ev.clientX + this.scrollElement.scrollLeft,
+          y2: ev.clientY + this.scrollElement.scrollTop
         }
       });
     }
@@ -141,29 +143,51 @@ export default class Editor extends React.PureComponent {
     });
   }
 
-  handleConnect({ attribute, type }, node) {
+  handleConnect(e, { attribute, type }, node) {
     const { connecting } = this.state;
     if (!connecting) return;
 
+    const data = { attribute, type, node };
+
+    if (e.changedTouches && e.changedTouches[0] && this.handleRefs) {
+      const elem = document.elementFromPoint(
+        e.changedTouches[0].clientX,
+        e.changedTouches[0].clientY
+      );
+      if (elem) {
+        const s = this.searchHandleByElement(elem);
+        if (s) {
+          data.type = s.type;
+          data.node = this.props.data.nodes.find(n => n.id === s.node);
+          if (s.attribute === "") {
+            data.attribute = null;
+          } else {
+            const nodeType = this.props.nodeTypes[data.node.type];
+            data.attribute = !nodeType ? null : nodeType.attributes.find(a => a.id === s.attribute);
+          }
+        }
+      }
+    }
+
     if (
-      type !== connecting.type &&
+      data.type !== connecting.type &&
       (
-        connecting.node !== node ||
-        connecting.attribute !== attribute ||
-        connecting.type !== type
+        connecting.node !== data.node ||
+        connecting.attribute !== data.attribute
       )
     ) {
-      const from = type === "output" ? {
-        node: node.id,
-        attribute: attribute ? attribute.id : ""
+
+      const from = data.type === "output" ? {
+        node: data.node.id,
+        attribute: data.attribute ? data.attribute.id : ""
       } : {
         node: connecting.node.id,
         attribute: connecting.attribute ? connecting.attribute.id : ""
       };
 
-      const to = type === "input" ? {
-        node: node.id,
-        attribute: attribute ? attribute.id : ""
+      const to = data.type === "input" ? {
+        node: data.node.id,
+        attribute: data.attribute ? data.attribute.id : ""
       } : {
         node: connecting.node.id,
         attribute: connecting.attribute ? connecting.attribute.id : ""
@@ -237,6 +261,20 @@ export default class Editor extends React.PureComponent {
       from: fh.output,
       to: th.input
     };
+  }
+
+  searchHandleByElement(element) {
+    if (!this.handleRefs) return null;
+    for (const [node, m] of this.handleRefs) {
+      for (const [attribute, o] of m) {
+        if (o.input === element) {
+          return { node, attribute, type: "input" };
+        } else if (o.output === element) {
+          return { node, attribute, type: "output" };
+        }
+      }
+    }
+    return null;
   }
 
   stopDragging = () => {
@@ -407,7 +445,7 @@ export default class Editor extends React.PureComponent {
               }}
               nodeId={n.id}
               onConnectionStart={(e, d) => this.handleConnectionStart(e, d, n)}
-              onConnect={(e, d) => this.handleConnect(d, n)}
+              onConnect={(e, d) => this.handleConnect(e, d, n)}
               onClick={e => this.handleNodeClick(e, n, i)}
               onDrag={
                 (e, { x, y }) => onNodeDrag && onNodeDrag(e, {
