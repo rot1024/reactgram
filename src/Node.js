@@ -30,6 +30,9 @@ const defaultTheme = {
     MozUserSelect: "none",
     msUserSelect: "none",
     userSelect: "none"
+  },
+  selectedNode: {
+    border: "1px solid red"
   }
 };
 

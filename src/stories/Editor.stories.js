@@ -210,7 +210,8 @@ export default () => {
         }}
         theme={{
           edgePath: {
-            stroke: "#01DAA9"
+            stroke: "#01DAA9",
+            strokeLinecap: "round"
           },
           selectedEdgePath: {
             stroke: "#F8E71C"

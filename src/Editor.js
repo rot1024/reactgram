@@ -291,10 +291,6 @@ export default class Editor extends React.PureComponent {
     const workspaceRect = this.workspaceElement ?
       this.workspaceElement.getBoundingClientRect() : null;
 
-    const edgeTheme = t("edge");
-    const edgePathTheme = t("edgePath");
-    const selectedEdgePathTheme = t("edgePath", "selectedEdgePath");
-
     return (
       <ScrollBox
         center={workspaceCenter}
@@ -350,14 +346,14 @@ export default class Editor extends React.PureComponent {
               y1={y1}
               x2={x2}
               y2={y2}
+              selected={selectedEdgeIndex === i}
               shadowRadius={edgeShadowRadius}
               strokeColor={edgeStrokeColor}
               strokeWidth={edgeStrokeWidth}
               svgPathProps={{
-                onClick: ev => this.handleEdgeClick(ev, e, i),
-                ...selectedEdgeIndex === i ? selectedEdgePathTheme : edgePathTheme
+                onClick: ev => this.handleEdgeClick(ev, e, i)
               }}
-              {...edgeTheme} />
+              theme={theme} />
           );
         })}
         {data && data.nodes && data.nodes.map((n, i) => {
@@ -433,6 +429,8 @@ export default class Editor extends React.PureComponent {
         })}
         {ce && (
           <Edge
+            x={ce.x1 < ce.x2 ? ce.x1 : ce.x2}
+            y={ce.y1 < ce.y2 ? ce.y1 : ce.y2}
             x1={ce.x1}
             y1={ce.y1}
             x2={ce.x2}
@@ -440,16 +438,11 @@ export default class Editor extends React.PureComponent {
             shadowRadius={edgeShadowRadius}
             strokeColor={edgeStrokeColor}
             strokeWidth={edgeStrokeWidth}
-            svgPathProps={t("edgePath", "connectingEdgePath")}
-            {...t({
-              styleNames: ["edge", "connectingEdge"],
-              style: {
-                position: "absolute",
-                left: `${ce.x1 < ce.x2 ? ce.x1 : ce.x2}px`,
-                top: `${ce.y1 < ce.y2 ? ce.y1 : ce.y2}px`,
-                pointerEvents: "none"
-              }
-            })} />
+            theme={theme}
+            themePrefix="connecting"
+            style={{
+              pointerEvents: "none"
+            }} />
         )}
       </ScrollBox>
     );
