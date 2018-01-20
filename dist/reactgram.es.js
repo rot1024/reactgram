@@ -20382,10 +20382,12 @@ function (_React$PureComponent) {
 
   _proto.handleMouseMove = function handleMouseMove(e) {
     if (this.state.connectingEdge) {
+      var ev = e.targetTouches ? e.targetTouches[0] : e;
+      if (!ev) return;
       this.setState({
         connectingEdge: _extends({}, this.state.connectingEdge, {
-          x2: e.clientX + this.scrollElement.scrollLeft,
-          y2: e.clientY + this.scrollElement.scrollTop
+          x2: ev.clientX + this.scrollElement.scrollLeft,
+          y2: ev.clientY + this.scrollElement.scrollTop
         })
       });
     }
@@ -20414,23 +20416,52 @@ function (_React$PureComponent) {
     });
   };
 
-  _proto.handleConnect = function handleConnect(_ref2, node) {
+  _proto.handleConnect = function handleConnect(e, _ref2, node) {
     var attribute = _ref2.attribute,
         type = _ref2.type;
     var connecting = this.state.connecting;
     if (!connecting) return;
+    var data = {
+      attribute: attribute,
+      type: type,
+      node: node
+    };
 
-    if (type !== connecting.type && (connecting.node !== node || connecting.attribute !== attribute || connecting.type !== type)) {
-      var from = type === "output" ? {
-        node: node.id,
-        attribute: attribute ? attribute.id : ""
+    if (e.changedTouches && e.changedTouches[0] && this.handleRefs) {
+      var elem = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+
+      if (elem) {
+        var s = this.searchHandleByElement(elem);
+
+        if (s) {
+          data.type = s.type;
+          data.node = this.props.data.nodes.find(function (n) {
+            return n.id === s.node;
+          });
+
+          if (s.attribute === "") {
+            data.attribute = null;
+          } else {
+            var nodeType = this.props.nodeTypes[data.node.type];
+            data.attribute = !nodeType ? null : nodeType.attributes.find(function (a) {
+              return a.id === s.attribute;
+            });
+          }
+        }
+      }
+    }
+
+    if (data.type !== connecting.type && (connecting.node !== data.node || connecting.attribute !== data.attribute)) {
+      var from = data.type === "output" ? {
+        node: data.node.id,
+        attribute: data.attribute ? data.attribute.id : ""
       } : {
         node: connecting.node.id,
         attribute: connecting.attribute ? connecting.attribute.id : ""
       };
-      var to = type === "input" ? {
-        node: node.id,
-        attribute: attribute ? attribute.id : ""
+      var to = data.type === "input" ? {
+        node: data.node.id,
+        attribute: data.attribute ? data.attribute.id : ""
       } : {
         node: connecting.node.id,
         attribute: connecting.attribute ? connecting.attribute.id : ""
@@ -20524,6 +20555,60 @@ function (_React$PureComponent) {
     };
   };
 
+  _proto.searchHandleByElement = function searchHandleByElement(element) {
+    if (!this.handleRefs) return null;
+
+    for (var _iterator = this.handleRefs, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+      var _ref4;
+
+      if (_isArray) {
+        if (_i >= _iterator.length) break;
+        _ref4 = _iterator[_i++];
+      } else {
+        _i = _iterator.next();
+        if (_i.done) break;
+        _ref4 = _i.value;
+      }
+
+      var _ref5 = _ref4;
+      var _node = _ref5[0];
+      var _m = _ref5[1];
+
+      for (var _iterator2 = _m, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+        var _ref7;
+
+        if (_isArray2) {
+          if (_i2 >= _iterator2.length) break;
+          _ref7 = _iterator2[_i2++];
+        } else {
+          _i2 = _iterator2.next();
+          if (_i2.done) break;
+          _ref7 = _i2.value;
+        }
+
+        var _ref8 = _ref7;
+        var _attribute = _ref8[0];
+        var _o = _ref8[1];
+
+        if (_o.input === element) {
+          return {
+            node: _node,
+            attribute: _attribute,
+            type: "input"
+          };
+        } else if (_o.output === element) {
+          return {
+            node: _node,
+            attribute: _attribute,
+            type: "output"
+          };
+        }
+      }
+    }
+
+    return null;
+  };
+
   _proto.render = function render() {
     var _this2 = this;
 
@@ -20582,9 +20667,9 @@ function (_React$PureComponent) {
       onTouchCancel: this.stopDragging // eslint-disable-line react/jsx-handler-names
       ,
       onScroll: onWorkspaceScroll,
-      render: function render(_ref3) {
-        var s = _ref3.style,
-            props = _objectWithoutProperties(_ref3, ["style"]);
+      render: function render(_ref9) {
+        var s = _ref9.style,
+            props = _objectWithoutProperties(_ref9, ["style"]);
         return React.createElement(Grid, _extends({
           backgroundColor: gridBackgroundColor,
           gridColor: gridColor,
@@ -20687,14 +20772,14 @@ function (_React$PureComponent) {
           return _this2.handleConnectionStart(e, d, n);
         },
         onConnect: function onConnect(e, d) {
-          return _this2.handleConnect(d, n);
+          return _this2.handleConnect(e, d, n);
         },
         onClick: function onClick(e) {
           return _this2.handleNodeClick(e, n, i);
         },
-        onDrag: function onDrag(e, _ref4) {
-          var x = _ref4.x,
-              y = _ref4.y;
+        onDrag: function onDrag(e, _ref10) {
+          var x = _ref10.x,
+              y = _ref10.y;
           return onNodeDrag && onNodeDrag(e, {
             node: n,
             index: i,
@@ -20702,9 +20787,9 @@ function (_React$PureComponent) {
             y: y
           });
         },
-        onDragEnd: function onDragEnd(e, _ref5) {
-          var x = _ref5.x,
-              y = _ref5.y;
+        onDragEnd: function onDragEnd(e, _ref11) {
+          var x = _ref11.x,
+              y = _ref11.y;
           return onNodeDragEnd && onNodeDragEnd(e, {
             node: n,
             index: i,
