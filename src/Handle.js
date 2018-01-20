@@ -39,6 +39,7 @@ const Handle = ({
       onTouchEnd={endConnect}
       ref={handleRef}
       {...t(
+        null,
         "handle",
         ...input ? ["inputHandle"] : [],
         ...output ? ["outputHandle"] : [],

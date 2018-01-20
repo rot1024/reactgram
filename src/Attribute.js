@@ -56,7 +56,7 @@ const Attribute = ({
 
   return (
     <div
-      {...t(...sn)}>
+      {...t(null, ...sn)}>
       {input && (
         <Handle
           className={handleClassName}

@@ -316,7 +316,7 @@ export default class Editor extends React.PureComponent {
             gridRef={e => { this.workspaceElement = e; }}
             onClick={e => this.handleWorkspaceClick(e)}
             {...props}
-            {...t({
+            {...t(null, {
               styleNames: ["grid"],
               style: s
             })} />

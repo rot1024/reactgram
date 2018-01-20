@@ -11,16 +11,16 @@ const NodeAttribute = ({
 }) => {
   const t = themeable("nodeAttributeContent", theme, className, style);
   return (
-    <div {...t("nodeAttributeContent")}>
+    <div {...t(null, "nodeAttributeContent")}>
       {data.icon && (
         <img
           src={data.icon}
           alt={data.title || data.type}
           width={16}
           height={16}
-          {...t("nodeAttributeContentImage")} />
+          {...t(null, "nodeAttributeContentImage")} />
       )}
-      <span {...t("nodeAttributeContentTitle")}>
+      <span {...t(null, "nodeAttributeContentTitle")}>
         {data.title || data.type}
       </span>
     </div>

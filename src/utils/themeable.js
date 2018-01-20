@@ -2,9 +2,9 @@ import themeable from "react-themeable";
 
 const enhancedThemeable = (defaultStyleName, theme, className, style) => {
   const t = themeable(theme || {});
-  let key = 1;
+  let defkey = 1;
 
-  return (...sn) => {
+  return (key, ...sn) => {
     let styleNames = sn;
     let moreClassName;
     let moreStyle;
@@ -15,7 +15,8 @@ const enhancedThemeable = (defaultStyleName, theme, className, style) => {
       moreStyle = sn[0].style;
     }
 
-    const props = t(key++, ...styleNames);
+    const k = typeof key === "string" || typeof key === "number" ? key : String(defkey++);
+    const props = t(k, ...styleNames);
 
     if (className) {
       if (props.className) {

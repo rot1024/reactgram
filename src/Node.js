@@ -150,7 +150,7 @@ export default class Node extends React.PureComponent {
         position={position}>
         <div
           onClick={e => { e.stopPropagation(); }}
-          {...t({
+          {...t(null, {
             styleNames: ["node", ...selected ? ["selectedNode"] : []],
             style: {
               left: "0",

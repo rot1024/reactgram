@@ -173,7 +173,7 @@ export default class ScrollBox extends React.PureComponent {
             scrollRef(e);
           }
         }}
-        {...t({
+        {...t(null, {
           styleNames: ["scrollBox"],
           style: workspaceStyle
         })}
