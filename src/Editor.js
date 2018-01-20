@@ -28,10 +28,12 @@ export default class Editor extends React.PureComponent {
     id: PropTypes.string,
     nodeAttribute: PropTypes.shape({
       children: PropTypes.node,
+      className: PropTypes.string,
       component: PropTypes.oneOf([PropTypes.element, PropTypes.func]),
       draggable: PropTypes.bool,
       render: PropTypes.func,
-      theme: PropTypes.any
+      theme: PropTypes.any,
+      style: PropTypes.object
     }),
     nodeSelectable: PropTypes.bool,
     nodeTypes: PropTypes.object,
@@ -261,10 +263,12 @@ export default class Editor extends React.PureComponent {
       id,
       nodeAttribute: {
         children: nodeAttributeChildren,
+        className: nodeAttributeClassName,
         component: nodeAttributeComponent,
         draggable: nodeAttributeDraggable,
         render: nodeAttributeRender,
-        theme: nodeAttributeTheme
+        theme: nodeAttributeTheme,
+        style: nodeAttributeStyle
       },
       nodeTypes,
       onNodeData,
@@ -386,8 +390,8 @@ export default class Editor extends React.PureComponent {
               handleRefs={this.handleRefs.get(n.id)}
               nodeAttribute={{
                 children: nodeAttributeChildren,
+                className: nodeAttributeClassName,
                 component: nodeAttributeComponent,
-                data: nodeData,
                 draggable: nodeAttributeDraggable,
                 input: nt.input,
                 inputConnected: data.edges && data.edges.some(
@@ -398,7 +402,8 @@ export default class Editor extends React.PureComponent {
                   e => e.from.node === n.id && e.from.attribute === ""
                 ),
                 render: nodeAttributeRender,
-                theme: nodeAttributeTheme
+                theme: nodeAttributeTheme,
+                style: nodeAttributeStyle
               }}
               nodeId={n.id}
               onConnectionStart={(e, d) => this.handleConnectionStart(e, d, n)}

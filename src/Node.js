@@ -165,6 +165,7 @@ export default class Node extends React.PureComponent {
             attributes={[
               {
                 ...nodeAttribute,
+                data,
                 id: "",
                 ...dna ? {
                   component: dna,

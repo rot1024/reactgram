@@ -10,10 +10,14 @@ const attributePropTypeShape = {
   draggable: PropTypes.bool,
   id: PropTypes.string.isRequired,
   input: PropTypes.bool,
+  inputClassName: PropTypes.string,
   inputConnected: PropTypes.bool,
+  inputStyle: PropTypes.object,
   isNodeAttribute: PropTypes.bool,
   output: PropTypes.bool,
+  outputClassName: PropTypes.string,
   outputConnected: PropTypes.bool,
+  outputStyle: PropTypes.object,
   render: PropTypes.func,
   single: PropTypes.bool,
   theme: PropTypes.any
@@ -80,19 +84,25 @@ export default class AttributeList extends React.PureComponent {
             contentTheme={a.theme}
             data={a.data}
             draggable={a.draggable}
-            input={a.input}
-            inputConnected={a.inputConnected}
-            inputHandleRef={handleRefs ? e => { this.setHandleRef(a, "input", e); } : undefined}
+            input={a.input ? {
+              className: a.inputClassName,
+              connected: a.inputConnected,
+              handleRef: handleRefs ? e => { this.setHandleRef(a, "input", e); } : undefined,
+              onClick: e => this.handleClick(e, { type: "input", a, i }),
+              onConnectionStart: e => this.handleConnectionStart(e, { type: "input", a, i }),
+              onConnect: e => this.handleConnect(e, { type: "input", a, i }),
+              style: a.inputStyle
+            } : undefined}
             isNodeAttribute={a.isNodeAttribute}
-            onInputClick={e => this.handleClick(e, { type: "input", a, i })}
-            onInputConnectionStart={e => this.handleConnectionStart(e, { type: "input", a, i })}
-            onInputConnect={e => this.handleConnect(e, { type: "input", a, i })}
-            onOutputClick={e => this.handleClick(e, { type: "output", a, i })}
-            onOutputConnectionStart={e => this.handleConnectionStart(e, { type: "output", a, i })}
-            onOutputConnect={e => this.handleConnect(e, { type: "output", a, i })}
-            output={a.output}
-            outputConnected={a.outputConnected}
-            outputHandleRef={handleRefs ? e => { this.setHandleRef(a, "output", e); } : undefined}
+            output={a.output ? {
+              className: a.outputClassName,
+              connected: a.outputConnected,
+              handleRef: handleRefs ? e => { this.setHandleRef(a, "output", e); } : undefined,
+              onClick: e => this.handleClick(e, { type: "output", a, i }),
+              onConnect: e => this.handleConnect(e, { type: "output", a, i }),
+              onConnectionStart: e => this.handleConnectionStart(e, { type: "output", a, i }),
+              style: a.outputStyle
+            } : undefined}
             render={a.render}
             single={a.single}
             theme={theme}>

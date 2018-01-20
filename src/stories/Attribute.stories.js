@@ -10,23 +10,27 @@ export default () => {
       <div>
         <div>
           <Component
-            input
-            output
-            onInputConnectionStart={() => console.log("connection start on input")}
-            onInputConnect={() => console.log("connect to input")}
-            onOutputConnectionStart={() => console.log("connection start on output")}
-            onOutputConnect={() => console.log("connect to output")}>
+            input={{
+              onConnectionStart: () => console.log("connection start on input"),
+              onConnect: () => console.log("connect to input")
+            }}
+            output={{
+              onOutputConnectionStart: () => console.log("connection start on output"),
+              onOutputConnect: () => console.log("connect to output")
+            }}>
             Attribute
           </Component>
         </div>
         <div>
           <Component
             data={{ hoge: "hoge" }}
-            input
-            onInputConnectionStart={() => console.log("connection start on input")}
-            onInputConnect={() => console.log("connect to input")}
-            onOutputConnectionStart={() => console.log("connection start on output")}
-            onOutputConnect={() => console.log("connect to output")}
+            input={{
+              onConnectionStart: () => console.log("connection start on input"),
+              onConnect: () => console.log("connect to input"),
+              style: {
+                backgroundColor: "red"
+              }
+            }}
             render={({ data }) => (
               <span style={{ color: "red" }}>
                 {JSON.stringify(data)}

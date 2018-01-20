@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import classNames from "classnames";
 
 import Handle from "./Handle";
 import themeable from "./utils/themeable";
@@ -15,18 +16,8 @@ const Attribute = ({
   draggable,
   handleClassName,
   input,
-  inputConnected,
-  inputHandleRef,
   isNodeAttribute,
-  onInputClick,
-  onInputConnect,
-  onInputConnectionStart,
-  onOutputClick,
-  onOutputConnect,
-  onOutputConnectionStart,
   output,
-  outputConnected,
-  outputHandleRef,
   render,
   single,
   style,
@@ -59,13 +50,14 @@ const Attribute = ({
       {...t(null, ...sn)}>
       {input && (
         <Handle
-          className={handleClassName}
-          connected={inputConnected}
-          handleRef={inputHandleRef}
-          onClick={onInputClick}
-          onConnect={onInputConnect}
-          onConnectionStart={onInputConnectionStart}
+          className={classNames(handleClassName, input && input.className)}
+          connected={input && input.connected}
+          handleRef={input ? input.handleRef : undefined}
+          onClick={input ? input.onClick : undefined}
+          onConnect={input ? input.onConnect : undefined}
+          onConnectionStart={input ? input.onConnectionStart : undefined}
           input
+          style={input ? input.style : undefined}
           theme={theme} />
       )}
       <div
@@ -79,12 +71,14 @@ const Attribute = ({
       </div>
       {output && (
         <Handle
-          handleRef={outputHandleRef}
-          onClick={onOutputClick}
-          onConnect={onOutputConnect}
-          onConnectionStart={onOutputConnectionStart}
+          className={classNames(handleClassName, output && output.className)}
+          connected={output && output.connected}
+          handleRef={output ? output.handleRef : undefined}
+          onClick={output ? output.onClick : undefined}
+          onConnect={output ? output.onConnect : undefined}
+          onConnectionStart={output ? output.onConnectionStart : undefined}
           output
-          connected={outputConnected}
+          style={output ? output.style : undefined}
           theme={theme} />
       )}
     </div>
@@ -102,19 +96,25 @@ Attribute.propTypes = {
   draggable: PropTypes.bool,
   handleClassName: PropTypes.string,
   handleStyle: PropTypes.object,
-  input: PropTypes.bool,
-  inputConnected: PropTypes.bool,
-  inputHandleRef: PropTypes.func,
+  input: PropTypes.shape({
+    className: PropTypes.string,
+    connected: PropTypes.bool,
+    handleRef: PropTypes.func,
+    onClick: PropTypes.func,
+    onConnect: PropTypes.func,
+    onConnectionStart: PropTypes.func,
+    style: PropTypes.object
+  }),
   isNodeAttribute: PropTypes.bool,
-  onInputClick: PropTypes.func,
-  onInputConnect: PropTypes.func,
-  onInputConnectionStart: PropTypes.func,
-  onOutputClick: PropTypes.func,
-  onOutputConnect: PropTypes.func,
-  onOutputConnectionStart: PropTypes.func,
-  output: PropTypes.bool,
-  outputConnected: PropTypes.bool,
-  outputHandleRef: PropTypes.func,
+  output: PropTypes.shape({
+    className: PropTypes.string,
+    connected: PropTypes.bool,
+    handleRef: PropTypes.func,
+    onClick: PropTypes.func,
+    onConnect: PropTypes.func,
+    onConnectionStart: PropTypes.func,
+    style: PropTypes.object
+  }),
   render: PropTypes.func,
   single: PropTypes.bool,
   style: PropTypes.object,
@@ -122,6 +122,7 @@ Attribute.propTypes = {
 };
 
 Attribute.defaultTheme = {
+  ...Handle.defaultTheme,
   attribute: {
     padding: "10px 20px",
     position: "relative"
