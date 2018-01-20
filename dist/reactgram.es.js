@@ -20382,11 +20382,22 @@ function (_React$PureComponent) {
 
   _proto.handleMouseMove = function handleMouseMove(e) {
     if (this.state.connectingEdge) {
+      this.setState({
+        connectingEdge: _extends({}, this.state.connectingEdge, {
+          x2: e.clientX + this.scrollElement.scrollLeft - this.workspaceElement.offsetLeft,
+          y2: e.clientY + this.scrollElement.scrollTop - this.workspaceElement.offsetTop
+        })
+      });
+    }
+  };
+
+  _proto.handleTouchMove = function handleTouchMove(e) {
+    if (this.state.connectingEdge) {
       var ev = e.changedTouches && e.changedTouches[0] || e;
       this.setState({
         connectingEdge: _extends({}, this.state.connectingEdge, {
-          x2: ev.clientX + this.scrollElement.scrollLeft,
-          y2: ev.clientY + this.scrollElement.scrollTop
+          x2: ev.clientX + this.scrollElement.scrollLeft - this.workspaceElement.offsetLeft,
+          y2: ev.clientY + this.scrollElement.scrollTop - this.workspaceElement.offsetTop
         })
       });
     }
@@ -20657,7 +20668,7 @@ function (_React$PureComponent) {
         return _this2.handleMouseMove(e);
       },
       onTouchMove: function onTouchMove(e) {
-        return _this2.handleMouseMove(e);
+        return _this2.handleTouchMove(e);
       },
       onMouseUp: this.stopDragging // eslint-disable-line react/jsx-handler-names
       ,
