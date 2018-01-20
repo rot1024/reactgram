@@ -102,7 +102,8 @@ export default () => {
          ]
        }
      },
-     selectedNode: -1
+     selectedNode: -1,
+     selectedEdge: -1
    }
 
    handleConnect({ from, to }) {
@@ -164,29 +165,31 @@ export default () => {
      });
    }
 
-   handleSelectedNodeChange(i) {
+   handleSelect({ node, edge, index }) {
      this.setState({
-       selectedNode: i
+       selectedNode: node ? index : -1,
+       selectedEdge: edge ? index : -1
      });
    }
 
    render() {
      const { appearance, theme } = this.props;
-     const { data, nodeTypes, selectedNode } = this.state;
+     const { data, nodeTypes, selectedEdge, selectedNode } = this.state;
      return (
        <Component
          appearance={appearance}
+         edgeSelectable
          data={data}
          nodeSelectable
          nodeTypes={nodeTypes}
          onConnect={this.handleConnect.bind(this)}
-         onEdgeClick={(e, d) => console.log("edgeClick", d)}
          onNodeData={({ nodeIndex: i }) => ({
            handleOutValueChange: e => this.handleOutValueChange(e.target.value, i)
          })}
          onNodeDrag={(e, a) => this.handleNodeMove(a)}
          onHandleClick={(e, d) => console.log("handleClick", d)}
-         onSelectedNodeChange={i => this.handleSelectedNodeChange(i)}
+         onSelect={(e, d) => this.handleSelect(d)}
+         selectedEdgeIndex={selectedEdge}
          selectedNodeIndex={selectedNode}
          theme={theme} />
      );
@@ -201,12 +204,17 @@ export default () => {
     .addWithJSX("themed", () => (
       <NodeEditor
         appearance={{
-          edgeStrokeColor: "#01DAA9",
           edgeStrokeWidth: 3,
           gridBackgroundColor: "#2B2A2F",
-          gridType: "line",
+          gridType: "line"
         }}
         theme={{
+          edgePath: {
+            stroke: "#01DAA9"
+          },
+          selectedEdgePath: {
+            stroke: "#F8E71C"
+          },
           handle: {
             display: "inline-block",
             width: "18px",

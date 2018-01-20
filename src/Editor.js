@@ -24,6 +24,7 @@ export default class Editor extends React.PureComponent {
       edges: PropTypes.array,
       nodes: PropTypes.array
     }),
+    edgeSelectable: PropTypes.bool,
     id: PropTypes.string,
     nodeAttribute: PropTypes.shape({
       children: PropTypes.node,
@@ -41,8 +42,9 @@ export default class Editor extends React.PureComponent {
     onNodeData: PropTypes.func,
     onNodeDrag: PropTypes.func,
     onNodeDragEnd: PropTypes.func,
-    onSelectedNodeChange: PropTypes.func,
+    onSelect: PropTypes.func,
     onWorkspaceScroll: PropTypes.func,
+    selectedEdgeIndex: PropTypes.number,
     selectedNodeIndex: PropTypes.number,
     style: PropTypes.object,
     theme: PropTypes.any,
@@ -60,6 +62,7 @@ export default class Editor extends React.PureComponent {
       gridType: "line"
     },
     nodeAttribute: {},
+    selectedEdgeIndex: -1,
     selectedNodeIndex: -1,
     workspaceHeight: 2000,
     workspaceWidth: 2000
@@ -189,22 +192,29 @@ export default class Editor extends React.PureComponent {
   }
 
   handleNodeClick(e, n, i) {
-    if (!this.props.onSelectedNodeChange) return;
+    if (!this.props.onSelect) return;
     if (this.props.nodeSelectable && this.props.selectedNodeIndex !== i) {
-      this.props.onSelectedNodeChange(i, n);
+      this.props.onSelect(e, { node: n, edge: null, index: i });
     }
     if (this.props.onNodeClick) {
-      this.props.onNodeClick(e, {
-        node: n,
-        index: i
-      });
+      this.props.onNodeClick(e, { node: n, index: i });
     }
   }
 
-  handleWorkspaceClick() {
-    if (!this.props.onSelectedNodeChange) return;
-    if (this.props.selectedNodeIndex !== -1) {
-      this.props.onSelectedNodeChange(-1, null);
+  handleWorkspaceClick(e) {
+    if (!this.props.onSelect) return;
+    if (this.props.selectedNodeIndex !== -1 || this.props.selectedEdgeIndex !== -1) {
+      this.props.onSelect(e, { node: null, edge: null, index: -1 });
+    }
+  }
+
+  handleEdgeClick(ev, e, i) {
+    ev.stopPropagation();
+    if (this.props.edgeSelectable && this.props.onSelect && this.props.selectedEdgeIndex !== i) {
+      this.props.onSelect(ev, { node: null, edge: e, index: i });
+    }
+    if (this.props.onEdgeClick) {
+      this.props.onEdgeClick(ev, { edge: e, index: i });
     }
   }
 
@@ -257,11 +267,11 @@ export default class Editor extends React.PureComponent {
         theme: nodeAttributeTheme
       },
       nodeTypes,
-      onEdgeClick,
       onNodeData,
       onNodeDrag,
       onNodeDragEnd,
       onWorkspaceScroll,
+      selectedEdgeIndex,
       selectedNodeIndex,
       style,
       theme,
@@ -281,7 +291,9 @@ export default class Editor extends React.PureComponent {
     const workspaceRect = this.workspaceElement ?
       this.workspaceElement.getBoundingClientRect() : null;
 
+    const edgeTheme = t("edge");
     const edgePathTheme = t("edgePath");
+    const selectedEdgePathTheme = t("edgePath", "selectedEdgePath");
 
     return (
       <ScrollBox
@@ -302,7 +314,7 @@ export default class Editor extends React.PureComponent {
             gridSize={gridSize}
             gridType={gridType}
             gridRef={e => { this.workspaceElement = e; }}
-            onClick={() => this.handleWorkspaceClick()}
+            onClick={e => this.handleWorkspaceClick(e)}
             {...props}
             {...t({
               styleNames: ["grid"],
@@ -342,13 +354,10 @@ export default class Editor extends React.PureComponent {
               strokeColor={edgeStrokeColor}
               strokeWidth={edgeStrokeWidth}
               svgPathProps={{
-                onClick: evt => onEdgeClick && onEdgeClick(evt, {
-                  edge: e,
-                  index: i
-                }),
-                ...edgePathTheme
+                onClick: ev => this.handleEdgeClick(ev, e, i),
+                ...selectedEdgeIndex === i ? selectedEdgePathTheme : edgePathTheme
               }}
-              style={{ position: "absolute" }} />
+              {...edgeTheme} />
           );
         })}
         {data && data.nodes && data.nodes.map((n, i) => {
