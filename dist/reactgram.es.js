@@ -20384,8 +20384,8 @@ function (_React$PureComponent) {
     if (this.state.connectingEdge) {
       this.setState({
         connectingEdge: _extends({}, this.state.connectingEdge, {
-          x2: e.clientX + this.scrollElement.scrollLeft - this.workspaceElement.offsetLeft,
-          y2: e.clientY + this.scrollElement.scrollTop - this.workspaceElement.offsetTop
+          x2: e.clientX + this.scrollElement.scrollLeft - this.workspaceElement.offsetLeft - this.scrollElement.offsetLeft,
+          y2: e.clientY + this.scrollElement.scrollTop - this.workspaceElement.offsetTop - this.scrollElement.offsetTop
         })
       });
     }
@@ -20396,8 +20396,8 @@ function (_React$PureComponent) {
       var ev = e.changedTouches && e.changedTouches[0] || e;
       this.setState({
         connectingEdge: _extends({}, this.state.connectingEdge, {
-          x2: ev.clientX + this.scrollElement.scrollLeft - this.workspaceElement.offsetLeft,
-          y2: ev.clientY + this.scrollElement.scrollTop - this.workspaceElement.offsetTop
+          x2: ev.clientX + this.scrollElement.scrollLeft - this.workspaceElement.offsetLeft - this.scrollElement.offsetLeft,
+          y2: ev.clientY + this.scrollElement.scrollTop - this.workspaceElement.offsetTop - this.scrollElement.offsetTop
         })
       });
     }
