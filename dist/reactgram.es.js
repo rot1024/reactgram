@@ -20382,10 +20382,11 @@ function (_React$PureComponent) {
 
   _proto.handleMouseMove = function handleMouseMove(e) {
     if (this.state.connectingEdge) {
+      var rect = this.scrollElement.getBoundingClientRect();
       this.setState({
         connectingEdge: _extends({}, this.state.connectingEdge, {
-          x2: e.clientX + this.scrollElement.scrollLeft - this.workspaceElement.offsetLeft - this.scrollElement.offsetLeft,
-          y2: e.clientY + this.scrollElement.scrollTop - this.workspaceElement.offsetTop - this.scrollElement.offsetTop
+          x2: e.clientX + this.scrollElement.scrollLeft - this.workspaceElement.offsetLeft - rect.left,
+          y2: e.clientY + this.scrollElement.scrollTop - this.workspaceElement.offsetTop - rect.top
         })
       });
     }
@@ -20394,10 +20395,11 @@ function (_React$PureComponent) {
   _proto.handleTouchMove = function handleTouchMove(e) {
     if (this.state.connectingEdge) {
       var ev = e.changedTouches && e.changedTouches[0] || e;
+      var rect = this.scrollElement.getBoundingClientRect();
       this.setState({
         connectingEdge: _extends({}, this.state.connectingEdge, {
-          x2: ev.clientX + this.scrollElement.scrollLeft - this.workspaceElement.offsetLeft - this.scrollElement.offsetLeft,
-          y2: ev.clientY + this.scrollElement.scrollTop - this.workspaceElement.offsetTop - this.scrollElement.offsetTop
+          x2: ev.clientX + this.scrollElement.scrollLeft - this.workspaceElement.offsetLeft - rect.left,
+          y2: ev.clientY + this.scrollElement.scrollTop - this.workspaceElement.offsetTop - rect.top
         })
       });
     }
