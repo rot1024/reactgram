@@ -11,6 +11,7 @@ const appearance = {
   gridBackgroundColor: "#2B2A2F",
   gridType: "line"
 };
+
 const theme = {
   edgePath: {
     stroke: "#01DAA9",
@@ -251,7 +252,6 @@ export default class NodeEditor extends React.PureComponent {
        onSelect={(e, d) => this.handleSelect(d)}
        selectedEdgeIndex={selectedEdge}
        selectedNodeIndex={selectedNode}
-       style={{ top: "20px", left: "20px" }}
        theme={theme} />
    );
  }
