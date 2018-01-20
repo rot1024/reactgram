@@ -107,13 +107,14 @@ export default class Editor extends React.PureComponent {
 
   handleMouseMove(e) {
     if (this.state.connectingEdge) {
+      const rect = this.scrollElement.getBoundingClientRect();
       this.setState({
         connectingEdge: {
           ...this.state.connectingEdge,
           x2: e.clientX + this.scrollElement.scrollLeft -
-            this.workspaceElement.offsetLeft - this.scrollElement.offsetLeft,
+            this.workspaceElement.offsetLeft - rect.left,
           y2: e.clientY + this.scrollElement.scrollTop -
-            this.workspaceElement.offsetTop - this.scrollElement.offsetTop
+            this.workspaceElement.offsetTop - rect.top
         }
       });
     }
@@ -122,13 +123,14 @@ export default class Editor extends React.PureComponent {
   handleTouchMove(e) {
     if (this.state.connectingEdge) {
       const ev = e.changedTouches && e.changedTouches[0] || e;
+      const rect = this.scrollElement.getBoundingClientRect();
       this.setState({
         connectingEdge: {
           ...this.state.connectingEdge,
-          x2: ev.clientX + this.scrollElement.scrollLeft - 
-            this.workspaceElement.offsetLeft - this.scrollElement.offsetLeft,
+          x2: ev.clientX + this.scrollElement.scrollLeft -
+            this.workspaceElement.offsetLeft - rect.left,
           y2: ev.clientY + this.scrollElement.scrollTop -
-            this.workspaceElement.offsetTop - this.scrollElement.offsetTop
+            this.workspaceElement.offsetTop - rect.top
         }
       });
     }
