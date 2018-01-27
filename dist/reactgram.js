@@ -20748,13 +20748,13 @@ function (_React$PureComponent) {
         _this2.handleRefs.set(n.id, new Map());
       }
 
-      var nodeData = _extends({}, n.data, onNodeData ? onNodeData({
+      var nodeData = _extends({}, nt.data, n.data, onNodeData ? onNodeData({
         node: n,
         nodeIndex: i,
         nodeType: nt
       }) : {});
       return React.createElement(Node, {
-        attributes: nt.attributes.map(function (a) {
+        attributes: (n.attributes || nt.attributes).map(function (a) {
           return _extends({}, a, {
             inputConnected: data.edges && data.edges.some(function (e) {
               return e.to.node === n.id && e.to.attribute === a.id;
