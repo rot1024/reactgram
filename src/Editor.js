@@ -430,7 +430,7 @@ export default class Editor extends React.PureComponent {
 
           return (
             <Node
-              attributes={nt.attributes.map(a => ({
+              attributes={(n.attributes || nt.attributes).map(a => ({
                 ...a,
                 inputConnected: data.edges && data.edges.some(
                   e => e.to.node === n.id && e.to.attribute === a.id
