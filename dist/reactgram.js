@@ -162,6 +162,255 @@ function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
 
+var resizeDetectorStyles = createCommonjsModule(function (module, exports) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var parentStyle = exports.parentStyle = {
+  position: 'absolute',
+  left: 0,
+  top: 0,
+  right: 0,
+  bottom: 0,
+  overflow: 'hidden',
+  zIndex: -1,
+  visibility: 'hidden'
+};
+
+var shrinkChildStyle = exports.shrinkChildStyle = {
+  position: 'absolute',
+  left: 0,
+  top: 0,
+  width: '200%',
+  height: '200%'
+};
+
+var expandChildStyle = exports.expandChildStyle = {
+  position: 'absolute',
+  left: 0,
+  top: 0,
+  width: '100%',
+  height: '100%'
+};
+});
+
+unwrapExports(resizeDetectorStyles);
+var resizeDetectorStyles_1 = resizeDetectorStyles.parentStyle;
+var resizeDetectorStyles_2 = resizeDetectorStyles.shrinkChildStyle;
+var resizeDetectorStyles_3 = resizeDetectorStyles.expandChildStyle;
+
+var ResizeDetector_1 = createCommonjsModule(function (module, exports) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+
+
+var _react2 = _interopRequireDefault(React);
+
+
+
+var _propTypes2 = _interopRequireDefault(PropTypes);
+
+
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ResizeDetector = function (_Component) {
+  _inherits(ResizeDetector, _Component);
+
+  function ResizeDetector() {
+    _classCallCheck(this, ResizeDetector);
+
+    var _this = _possibleConstructorReturn(this, (ResizeDetector.__proto__ || Object.getPrototypeOf(ResizeDetector)).call(this));
+
+    _this.state = {
+      expandChildHeight: 0,
+      expandChildWidth: 0,
+      expandScrollLeft: 0,
+      expandScrollTop: 0,
+      shrinkScrollTop: 0,
+      shrinkScrollLeft: 0,
+      lastWidth: 0,
+      lastHeight: 0
+    };
+
+    _this.reset = _this.reset.bind(_this);
+    _this.handleScroll = _this.handleScroll.bind(_this);
+    return _this;
+  }
+
+  _createClass(ResizeDetector, [{
+    key: 'componentWillMount',
+    value: function componentWillMount() {
+      this.forceUpdate();
+    }
+  }, {
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var _containerSize = this.containerSize(),
+          _containerSize2 = _slicedToArray(_containerSize, 2),
+          width = _containerSize2[0],
+          height = _containerSize2[1];
+
+      this.reset(width, height);
+      this.props.onResize(width, height);
+    }
+  }, {
+    key: 'shouldComponentUpdate',
+    value: function shouldComponentUpdate(nextProps, nextState) {
+      return this.props !== nextProps || this.state !== nextState;
+    }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate() {
+      this.expand.scrollLeft = this.expand.scrollWidth;
+      this.expand.scrollTop = this.expand.scrollHeight;
+
+      this.shrink.scrollLeft = this.shrink.scrollWidth;
+      this.shrink.scrollTop = this.shrink.scrollHeight;
+    }
+  }, {
+    key: 'containerSize',
+    value: function containerSize() {
+      return [this.props.handleWidth && this.container.parentElement.offsetWidth, this.props.handleHeight && this.container.parentElement.offsetHeight];
+    }
+  }, {
+    key: 'reset',
+    value: function reset(containerWidth, containerHeight) {
+      if (typeof window === 'undefined') {
+        return;
+      }
+
+      var parent = this.container.parentElement;
+
+      var position = 'static';
+      if (parent.currentStyle) {
+        position = parent.currentStyle.position;
+      } else if (window.getComputedStyle) {
+        position = window.getComputedStyle(parent).position;
+      }
+      if (position === 'static') {
+        parent.style.position = 'relative';
+      }
+
+      this.setState({
+        expandChildHeight: this.expand.offsetHeight + 10,
+        expandChildWidth: this.expand.offsetWidth + 10,
+        lastWidth: containerWidth,
+        lastHeight: containerHeight
+      });
+    }
+  }, {
+    key: 'handleScroll',
+    value: function handleScroll(e) {
+      if (typeof window === 'undefined') {
+        return;
+      }
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      var state = this.state;
+
+      var _containerSize3 = this.containerSize(),
+          _containerSize4 = _slicedToArray(_containerSize3, 2),
+          width = _containerSize4[0],
+          height = _containerSize4[1];
+
+      if (width !== state.lastWidth || height !== state.lastHeight) {
+        this.props.onResize(width, height);
+      }
+
+      this.reset(width, height);
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this2 = this;
+
+      var state = this.state;
+
+
+      var expandStyle = _extends({}, resizeDetectorStyles.expandChildStyle, {
+        width: state.expandChildWidth,
+        height: state.expandChildHeight
+      });
+
+      return _react2.default.createElement(
+        'div',
+        { style: resizeDetectorStyles.parentStyle, ref: function ref(e) {
+            _this2.container = e;
+          } },
+        _react2.default.createElement(
+          'div',
+          { style: resizeDetectorStyles.parentStyle, onScroll: this.handleScroll, ref: function ref(e) {
+              _this2.expand = e;
+            } },
+          _react2.default.createElement('div', { style: expandStyle })
+        ),
+        _react2.default.createElement(
+          'div',
+          { style: resizeDetectorStyles.parentStyle, onScroll: this.handleScroll, ref: function ref(e) {
+              _this2.shrink = e;
+            } },
+          _react2.default.createElement('div', { style: resizeDetectorStyles.shrinkChildStyle })
+        )
+      );
+    }
+  }]);
+
+  return ResizeDetector;
+}(React.Component);
+
+exports.default = ResizeDetector;
+
+
+ResizeDetector.propTypes = {
+  handleWidth: _propTypes2.default.bool,
+  handleHeight: _propTypes2.default.bool,
+  onResize: _propTypes2.default.func
+};
+
+ResizeDetector.defaultProps = {
+  handleWidth: false,
+  handleHeight: false,
+  onResize: function onResize(e) {
+    return e;
+  }
+};
+});
+
+unwrapExports(ResizeDetector_1);
+
+var lib = createCommonjsModule(function (module, exports) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+
+
+var _ResizeDetector2 = _interopRequireDefault(ResizeDetector_1);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _ResizeDetector2.default;
+});
+
+var ResizeDetector$1 = unwrapExports(lib);
+
 var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 
 function ToObject(val) {
@@ -400,6 +649,16 @@ function (_React$PureComponent) {
     this.scroll(null, (width - this.scrollElement.clientWidth) / 2, (height - this.scrollElement.clientHeight) / 2);
   };
 
+  _proto.handleResize = function handleResize(w, h) {
+    if (this.props.rerenderOnResize) {
+      this.forceUpdate();
+    }
+
+    if (this.props.onResize) {
+      this.props.onResize(w, h);
+    }
+  };
+
   _proto.render = function render() {
     var _this2 = this;
 
@@ -409,6 +668,7 @@ function (_React$PureComponent) {
         className = _props2.className,
         component = _props2.component,
         id = _props2.id,
+        onResize = _props2.onResize,
         scrollRef = _props2.scrollRef,
         scrollX = _props2.scrollX,
         scrollY = _props2.scrollY,
@@ -417,7 +677,8 @@ function (_React$PureComponent) {
         width = _props2.width,
         height = _props2.height,
         render = _props2.render,
-        props = _objectWithoutProperties(_props2, ["center", "children", "className", "component", "id", "scrollRef", "scrollX", "scrollY", "style", "theme", "width", "height", "render"]);
+        rerenderOnResize = _props2.rerenderOnResize,
+        props = _objectWithoutProperties(_props2, ["center", "children", "className", "component", "id", "onResize", "scrollRef", "scrollX", "scrollY", "style", "theme", "width", "height", "render", "rerenderOnResize"]);
     var sty = {
       width: width + "px",
       height: height + "px"
@@ -454,7 +715,11 @@ function (_React$PureComponent) {
     }, t(null, {
       styleNames: ["scrollBox"],
       style: workspaceStyle
-    }), props), C);
+    }), props), React.createElement(ResizeDetector$1, {
+      handleWidth: true,
+      handleHeight: true,
+      onResize: this.handleResize.bind(this)
+    }), C);
   };
 
   return ScrollBox;
@@ -467,8 +732,10 @@ ScrollBox.propTypes = {
   component: PropTypes.any,
   height: PropTypes.number,
   id: PropTypes.string,
+  onResize: PropTypes.func,
   onScroll: PropTypes.func,
   render: PropTypes.func,
+  rerenderOnResize: PropTypes.bool,
   scrollRef: PropTypes.func,
   scrollX: PropTypes.number,
   scrollY: PropTypes.number,
@@ -20654,7 +20921,9 @@ function (_React$PureComponent) {
         onNodeData = _props.onNodeData,
         onNodeDrag = _props.onNodeDrag,
         onNodeDragEnd = _props.onNodeDragEnd,
+        onResize = _props.onResize,
         onWorkspaceScroll = _props.onWorkspaceScroll,
+        rerenderOnResize = _props.rerenderOnResize,
         selectedEdgeIndex = _props.selectedEdgeIndex,
         selectedNodeIndex = _props.selectedNodeIndex,
         style = _props.style,
@@ -20684,6 +20953,7 @@ function (_React$PureComponent) {
       ,
       onTouchCancel: this.stopDragging // eslint-disable-line react/jsx-handler-names
       ,
+      onResize: onResize,
       onScroll: onWorkspaceScroll,
       render: function render(_ref9) {
         var s = _ref9.style,
@@ -20704,6 +20974,7 @@ function (_React$PureComponent) {
           style: s
         })));
       },
+      rerenderOnResize: rerenderOnResize,
       scrollRef: function scrollRef(e) {
         _this2.scrollElement = e;
       },
@@ -20882,8 +21153,10 @@ Editor.propTypes = {
   onNodeData: PropTypes.func,
   onNodeDrag: PropTypes.func,
   onNodeDragEnd: PropTypes.func,
+  onResize: PropTypes.func,
   onSelect: PropTypes.func,
   onWorkspaceScroll: PropTypes.func,
+  rerenderOnResize: PropTypes.bool,
   selectedEdgeIndex: PropTypes.number,
   selectedNodeIndex: PropTypes.number,
   style: PropTypes.object,
