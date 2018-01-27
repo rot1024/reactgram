@@ -7662,6 +7662,12 @@ react-proxy@^3.0.0-alpha.0:
   dependencies:
     lodash "^4.6.1"
 
+react-resize-detector@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-resize-detector/-/react-resize-detector-1.1.0.tgz#4a9831fa3caad32230478dd0185cbd2aa91a5ebf"
+  dependencies:
+    prop-types "^15.5.10"
+
 react-split-pane@^0.1.74:
   version "0.1.74"
   resolved "https://registry.yarnpkg.com/react-split-pane/-/react-split-pane-0.1.74.tgz#cf79fc98b51ab0763fdc778749b810a102b036ca"

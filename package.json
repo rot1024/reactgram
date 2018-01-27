@@ -80,6 +80,7 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "react-draggable": "^3.0.5",
+    "react-resize-detector": "^1.1.0",
     "react-themeable": "^1.1.0"
   }
 }
