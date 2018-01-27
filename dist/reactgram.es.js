@@ -20767,11 +20767,11 @@ function (_React$PureComponent) {
           className: nodeAttributeClassName,
           component: nodeAttributeComponent,
           draggable: nodeAttributeDraggable,
-          input: nt.input,
+          input: typeof n.input === "boolean" ? n.input : nt.input,
           inputConnected: data.edges && data.edges.some(function (e) {
             return e.to.node === n.id && e.to.attribute === "";
           }),
-          output: nt.output,
+          output: typeof n.output === "boolean" ? n.output : nt.output,
           outputConnected: data.edges && data.edges.some(function (e) {
             return e.from.node === n.id && e.from.attribute === "";
           }),
