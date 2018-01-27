@@ -424,6 +424,7 @@ export default class Editor extends React.PureComponent {
           }
 
           const nodeData = {
+            ...nt.data,
             ...n.data,
             ...onNodeData ? onNodeData({ node: n, nodeIndex: i, nodeType: nt }) : {}
           };
