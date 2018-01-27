@@ -44,8 +44,10 @@ export default class Editor extends React.PureComponent {
     onNodeData: PropTypes.func,
     onNodeDrag: PropTypes.func,
     onNodeDragEnd: PropTypes.func,
+    onResize: PropTypes.func,
     onSelect: PropTypes.func,
     onWorkspaceScroll: PropTypes.func,
+    rerenderOnResize: PropTypes.bool,
     selectedEdgeIndex: PropTypes.number,
     selectedNodeIndex: PropTypes.number,
     style: PropTypes.object,
@@ -329,7 +331,9 @@ export default class Editor extends React.PureComponent {
       onNodeData,
       onNodeDrag,
       onNodeDragEnd,
+      onResize,
       onWorkspaceScroll,
+      rerenderOnResize,
       selectedEdgeIndex,
       selectedNodeIndex,
       style,
@@ -361,6 +365,7 @@ export default class Editor extends React.PureComponent {
         onMouseUp={this.stopDragging} // eslint-disable-line react/jsx-handler-names
         onTouchEnd={this.stopDragging} // eslint-disable-line react/jsx-handler-names
         onTouchCancel={this.stopDragging} // eslint-disable-line react/jsx-handler-names
+        onResize={onResize}
         onScroll={onWorkspaceScroll}
         render={({ style: s, ...props }) => (
           <Grid
@@ -376,6 +381,7 @@ export default class Editor extends React.PureComponent {
               style: s
             })} />
         )}
+        rerenderOnResize={rerenderOnResize}
         scrollRef={e => { this.scrollElement = e; }}
         scrollX={workspaceScrollX}
         scrollY={workspaceScrollY}

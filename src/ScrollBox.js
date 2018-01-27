@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import ResizeDetector from "react-resize-detector";
 
 import themeable from "./utils/themeable";
 
@@ -21,8 +22,10 @@ export default class ScrollBox extends React.PureComponent {
     component: PropTypes.any,
     height: PropTypes.number,
     id: PropTypes.string,
+    onResize: PropTypes.func,
     onScroll: PropTypes.func,
     render: PropTypes.func,
+    rerenderOnResize: PropTypes.bool,
     scrollRef: PropTypes.func,
     scrollX: PropTypes.number,
     scrollY: PropTypes.number,
@@ -110,6 +113,15 @@ export default class ScrollBox extends React.PureComponent {
     );
   }
 
+  handleResize(w, h) {
+    if (this.props.rerenderOnResize) {
+      this.forceUpdate();
+    }
+    if (this.props.onResize) {
+      this.props.onResize(w, h);
+    }
+  }
+
   scrollElement = null
 
   workspaceElement = null
@@ -129,6 +141,7 @@ export default class ScrollBox extends React.PureComponent {
       className,
       component,
       id,
+      onResize, // eslint-disable-line no-unused-vars
       scrollRef,
       scrollX, // eslint-disable-line no-unused-vars
       scrollY, // eslint-disable-line no-unused-vars
@@ -137,6 +150,7 @@ export default class ScrollBox extends React.PureComponent {
       width,
       height,
       render,
+      rerenderOnResize, // eslint-disable-line no-unused-vars
       ...props
     } = this.props;
 
@@ -178,6 +192,7 @@ export default class ScrollBox extends React.PureComponent {
           style: workspaceStyle
         })}
         {...props}>
+        <ResizeDetector handleWidth handleHeight onResize={this.handleResize.bind(this)} />
         {C}
       </div>
     );
